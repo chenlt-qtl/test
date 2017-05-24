@@ -1,16 +1,10 @@
 package com.ikoko.top.common.controller;
 
-import com.ikoko.top.common.ResultVo;
-import com.ikoko.top.common.config.JConfig;
-import com.ikoko.top.common.utils.JFileUtils;
-import com.ikoko.top.common.utils.JStringUtils;
-import com.ikoko.top.common.utils.JUploadUtils;
-import com.ikoko.top.common.utils.UserUtils;
-import com.ikoko.top.common.utils.qiniu.QiniuApi;
-import com.ikoko.top.sys.entity.User;
-import com.ikoko.top.sys.entity.UserQiniu;
-import com.ikoko.top.sys.service.UserQiniuService;
-import org.apache.commons.codec.binary.Base64;
+import java.io.File;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -18,9 +12,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.File;
+import org.apache.commons.codec.binary.Base64;
+import com.ikoko.top.common.ResultVo;
+import com.ikoko.top.common.config.JConfig;
+import com.ikoko.top.common.utils.JFileUtils;
+import com.ikoko.top.common.utils.JUploadUtils;
+import com.ikoko.top.common.utils.UserUtils;
+import com.ikoko.top.common.utils.qiniu.QiniuApi;
+import com.ikoko.top.sys.entity.User;
+import com.ikoko.top.sys.entity.UserQiniu;
+import com.ikoko.top.sys.service.UserQiniuService;
 
 /**
  * 上传控制器

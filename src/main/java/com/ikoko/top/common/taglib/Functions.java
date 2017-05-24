@@ -3,11 +3,6 @@ package com.ikoko.top.common.taglib;
 import java.util.Collection;
 import java.util.Date;
 
-import com.ikoko.top.common.utils.RelativeDateFormat;
-import com.ikoko.top.common.utils.SerializableUtils;
-import com.ikoko.top.common.utils.UserUtils;
-import com.ikoko.top.sys.entity.Sessions;
-import com.ikoko.top.sys.entity.User;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.eis.SessionDAO;
 import org.apache.shiro.subject.PrincipalCollection;
@@ -16,6 +11,9 @@ import org.springframework.util.CollectionUtils;
 
 import com.ikoko.top.common.config.JConfig;
 import com.ikoko.top.common.spring.SpringUtils;
+import com.ikoko.top.common.utils.RelativeDateFormat;
+import com.ikoko.top.common.utils.UserUtils;
+import com.ikoko.top.sys.entity.User;
 
 /**
  * 系统标签函数

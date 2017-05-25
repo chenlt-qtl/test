@@ -37,23 +37,22 @@ import com.ikoko.top.word.util.RequestUtil;
  * @author chenlt
  */
 @Controller
-@RequestMapping("/article")
+@RequestMapping("${adminPath}/article")
 public class ArticleController extends BaseController{
 	@Autowired
     private ArticleService articleService;
     
-    @RequestMapping("/add")
+    @RequestMapping(value = "/add")
     public String enterAdd(HttpServletRequest request, HttpServletResponse response) {
     	return "addArticle";
     }
     
-    @RequestMapping("/articleList")
-    public ModelAndView showArticle(HttpServletRequest request, HttpServletResponse response){
-    	ModelAndView modelAndView = new ModelAndView("articleList");
-    	return modelAndView;
+    @RequestMapping(value = "/articleList")
+    public String showArticle(HttpServletRequest request, HttpServletResponse response){
+    	return "word/article/list";
     }
     
-    @RequestMapping("/getArticlesPage")
+    @RequestMapping(value = "/getArticlesPage")
     public void getArticlesPage() throws IOException{
     	List list = articleService.getArticleByPage(RequestUtil.getParameterMap(request));
     	Map map = new HashMap<>();
@@ -62,7 +61,7 @@ public class ArticleController extends BaseController{
     	writeResponse(map);
     }
     
-    @RequestMapping("/delete")
+    @RequestMapping(value = "/delete")
     public void delete(){
         Object id = request.getParameter("id");
         if(id != null){
@@ -71,7 +70,7 @@ public class ArticleController extends BaseController{
         }
     }
     
-    @RequestMapping("/getMp3")
+    @RequestMapping(value = "/getMp3")
     public void getMp3() {
         Object id = request.getParameter("id");
         if(id != null){
@@ -82,7 +81,7 @@ public class ArticleController extends BaseController{
         }
     }
     
-    @RequestMapping("/enterLevel")
+    @RequestMapping(value = "/enterLevel")
     public void enterLevel() {//进入关卡页面
         Object id = request.getParameter("id");
         if(id != null){

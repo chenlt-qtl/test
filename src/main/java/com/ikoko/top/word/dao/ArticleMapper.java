@@ -5,10 +5,13 @@ import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 
+import com.ikoko.top.common.ICrudDao;
+import com.ikoko.top.common.annotation.MyBatisDao;
 import com.ikoko.top.word.entity.Article;
 import com.ikoko.top.word.entity.ArticleExample;
 
-public interface ArticleMapper {
+@MyBatisDao
+public interface ArticleMapper extends ICrudDao<Article> {
     int countByExample(ArticleExample example);
 
     int deleteByExample(ArticleExample example);

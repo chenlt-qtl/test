@@ -24,9 +24,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.ModelAndView;
 
+import com.ikoko.top.common.Page;
+import com.ikoko.top.common.utils.UserUtils;
 import com.ikoko.top.word.entity.Article;
 import com.ikoko.top.word.service.ArticleService;
 import com.ikoko.top.word.util.RequestUtil;
@@ -48,7 +50,10 @@ public class ArticleController extends BaseController{
     }
     
     @RequestMapping(value = "/articleList")
-    public String showArticle(HttpServletRequest request, HttpServletResponse response){
+    public String showArticle(Article article,Model model, Page<Article> page){
+        article.setUser(UserUtils.getLoginUser());
+        page.setEntity(article);
+        model.addAttribute("page", page.setList(articleService.findPage(page)));
     	return "word/article/list";
     }
     
@@ -71,14 +76,15 @@ public class ArticleController extends BaseController{
     }
     
     @RequestMapping(value = "/getMp3")
-    public void getMp3() {
+    public String getMp3() {
         Object id = request.getParameter("id");
         if(id != null){
-            Article article = articleService.getById(String.valueOf(id));
+            Article article = articleService.get(String.valueOf(id));
             if(article.getMp3()!=null){
                 writeMp3(article.getMp3());
             }
         }
+        return null;
     }
     
     @RequestMapping(value = "/enterLevel")

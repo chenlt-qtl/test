@@ -29,8 +29,10 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ikoko.top.common.service.CrudService;
 import com.ikoko.top.word.dao.AcceptationMapper;
 import com.ikoko.top.word.dao.ArticleMapper;
 import com.ikoko.top.word.dao.IcibaSentenceMapper;
@@ -40,7 +42,6 @@ import com.ikoko.top.word.dao.WordMapper;
 import com.ikoko.top.word.dto.SentenceList;
 import com.ikoko.top.word.entity.Acceptation;
 import com.ikoko.top.word.entity.Article;
-import com.ikoko.top.word.entity.ArticleExample;
 import com.ikoko.top.word.entity.IcibaSentence;
 import com.ikoko.top.word.entity.Sentence;
 import com.ikoko.top.word.entity.SentenceWordRel;
@@ -55,26 +56,10 @@ import com.ikoko.top.word.util.ParseIciba;
  * @author chenlt
  */
 @Service
-public class ArticleService {
+@Transactional(readOnly = true)
+public class ArticleService  extends CrudService<ArticleMapper, Article> {
 	@Autowired
     private ArticleMapper articleMapper;
-	
-	public String testQuery() throws Exception {
-        List<Article> articles = articleMapper.selectByExample(new ArticleExample());
-        String res = "";
-        if (articles != null && articles.size() > 0) {
-            for (Article article : articles) {
-                res += article.getTitle().toString() + "|";
-            }
-        } else {
-            res = "Not found.";
-        }
-        return res;
-    }
-	
-	public Article getById(String id){
-	    return articleMapper.selectByPrimaryKey(Long.parseLong(id));
-	}
 	
    public Article getByIdWithoutMp3(String id){
         return articleMapper.selectByIdWithoutMp3(Long.parseLong(id));
@@ -123,14 +108,14 @@ public class ArticleService {
                 }
 		    }
 		}
-		article.setStatus(1);
+		article.setStatus("0");
 		articleMapper.insert(article);
 		for(Sentence sentence:sentenceList.getSentences()){
 		    sentence.setContent(sentence.getContent().replaceAll(" "," "));
 		    if(StringUtils.isBlank(sentence.getContent().trim())){
 		        continue;
 		    }
-			sentence.setArticleId(article.getId());
+			sentence.setArticleId(Long.parseLong(article.getId()));
 			sentenceMapper.insert(sentence);
 			if(sentence.getWordList()!=null){
     			for(Word word:sentence.getWordList()){
@@ -194,13 +179,5 @@ public class ArticleService {
 	public List getArticleByPage(Map map){
 		return articleMapper.selectByPage(map);
 	}
-	
-	public void delete(String id){
-	    Article article = new Article();
-	    article.setStatus(0);
-	    ArticleExample ae = new ArticleExample();
-	    ae.or().andIdEqualTo(Long.parseLong(id));
-        articleMapper.updateByExampleSelective(article,ae);
-    }
 	
 }

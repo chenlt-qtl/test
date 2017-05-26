@@ -1,219 +1,44 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.ikoko.top.word.dao.ArticleMapper" >
-  <resultMap id="BaseResultMap" type="com.ikoko.top.word.entity.Article" >
-    <id column="id" property="id" jdbcType="BIGINT" />
-    <result column="title" property="title" jdbcType="VARCHAR" />
-    <result column="status" property="status" jdbcType="BIT" />
-    <result column="word_num" property="wordNum" jdbcType="INTEGER" />
-  </resultMap>
-  <resultMap id="ResultMapWithBLOBs" type="com.ikoko.top.word.entity.Article" extends="BaseResultMap" >
-    <result column="mp3" property="mp3" jdbcType="LONGVARBINARY" />
-  </resultMap>
-  <sql id="Example_Where_Clause" >
-    <where >
-      <foreach collection="oredCriteria" item="criteria" separator="or" >
-        <if test="criteria.valid" >
-          <trim prefix="(" suffix=")" prefixOverrides="and" >
-            <foreach collection="criteria.criteria" item="criterion" >
-              <choose >
-                <when test="criterion.noValue" >
-                  and ${criterion.condition}
-                </when>
-                <when test="criterion.singleValue" >
-                  and ${criterion.condition} #{criterion.value}
-                </when>
-                <when test="criterion.betweenValue" >
-                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
-                </when>
-                <when test="criterion.listValue" >
-                  and ${criterion.condition}
-                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
-                    #{listItem}
-                  </foreach>
-                </when>
-              </choose>
-            </foreach>
-          </trim>
+    <sql id="articleColumnsWithOutMp3">
+        a.id, title,a.status,word_num as wordNum ,CASE when mp3 is NULL then 0 else 1 END as hasMp3
+    </sql>
+    
+    <sql id="articleColumns">
+        id ,title,mp3,status,word_num
+    </sql>
+    
+    <sql id="articleJoins">
+        LEFT JOIN w_article_user_rel b ON a.id = b.article_id
+    </sql>
+    
+    <select id="count" resultType="int">
+        SELECT count(1) FROM w_article a <include refid="articleJoins"/>
+        <where>
+            a.status = '0'
+            <if test="page.entity.user != null and page.entity.user.id != null and page.entity.user.id != ''">
+	            and b.user_id = #{page.entity.user.id}
+	        </if>
+        </where>
+    </select>
+
+    <select id="findPage" resultType="com.ikoko.top.word.entity.Article">
+        SELECT <include refid="articleColumnsWithOutMp3"/> FROM w_article a <include refid="articleJoins"/>
+        <where>
+            a.status = '0'
+            <if test="page.entity.id!=null and page.entity.id!=''">
+                and b.user_id = #{page.entity.id}
+            </if>
+        </where>
+        <if test="page.orderBy!=''">
+             ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
         </if>
-      </foreach>
-    </where>
-  </sql>
-  <sql id="Update_By_Example_Where_Clause" >
-    <where >
-      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
-        <if test="criteria.valid" >
-          <trim prefix="(" suffix=")" prefixOverrides="and" >
-            <foreach collection="criteria.criteria" item="criterion" >
-              <choose >
-                <when test="criterion.noValue" >
-                  and ${criterion.condition}
-                </when>
-                <when test="criterion.singleValue" >
-                  and ${criterion.condition} #{criterion.value}
-                </when>
-                <when test="criterion.betweenValue" >
-                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
-                </when>
-                <when test="criterion.listValue" >
-                  and ${criterion.condition}
-                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
-                    #{listItem}
-                  </foreach>
-                </when>
-              </choose>
-            </foreach>
-          </trim>
-        </if>
-      </foreach>
-    </where>
-  </sql>
-  <sql id="Base_Column_List" >
-    id, title,status,word_num,CASE when mp3 is NULL then 0 else 1 END as hasMp3
-  </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.ikoko.top.word.entity.ArticleExample" >
-    select
-    <if test="distinct" >
-      distinct
-    </if>
-    <include refid="Base_Column_List" />
-    from article
-    <if test="_parameter != null" >
-      <include refid="Example_Where_Clause" />
-    </if>
-    <if test="orderByClause != null" >
-      order by ${orderByClause}
-    </if>
-  </select>
-  
-  <select id="selectByPage" resultMap="BaseResultMap" parameterType="map" >
-    select 
-    <include refid="Base_Column_List" />
-    from article where status = 1
-    <if test="title != null" >
-     and title like CONCAT('%',#{title},'%') 
-    </if>
-  </select>
-  
-   <select id="selectAll" resultType="com.ikoko.top.word.entity.Article" parameterType="map" >
-    select 
-    <include refid="Base_Column_List" />
-    from article
-  </select>
-  
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
-    select 
-    id ,title,mp3,status,word_num
-    from article
-    where id = #{id,jdbcType=BIGINT}
-  </select>
-  
-  <select id="selectByIdWithoutMp3" resultMap="BaseResultMap" parameterType="java.lang.Long" >
-    select 
-    <include refid="Base_Column_List" />
-    from article
-    where id = #{id,jdbcType=BIGINT}
-  </select>
-  
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
-    delete from article
-    where id = #{id,jdbcType=BIGINT}
-  </delete>
-  <delete id="deleteByExample" parameterType="com.ikoko.top.word.entity.ArticleExample" >
-    delete from article
-    <if test="_parameter != null" >
-      <include refid="Example_Where_Clause" />
-    </if>
-  </delete>
-  <insert id="insert" parameterType="com.ikoko.top.word.entity.Article" useGeneratedKeys="true" keyProperty="id">
-    insert into article (id, title, mp3,status,word_num)
-    values (#{id,jdbcType=BIGINT}, #{title,jdbcType=VARCHAR}, #{mp3,jdbcType=LONGVARBINARY},#{status,jdbcType=TINYINT},#{wordNum,jdbcType=INTEGER})
-  </insert>
-  <insert id="insertSelective" parameterType="com.ikoko.top.word.entity.Article" >
-    insert into article
-    <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        id,
-      </if>
-      <if test="title != null" >
-        title,
-      </if>
-      <if test="mp3 != null" >
-        mp3,
-      </if>
-      <if test="status != null" >
-        status,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        #{id,jdbcType=BIGINT},
-      </if>
-      <if test="title != null" >
-        #{title,jdbcType=VARCHAR},
-      </if>
-      <if test="mp3 != null" >
-        #{mp3,jdbcType=LONGVARBINARY},
-      </if>
-      <if test="status != null" >
-        #{status,jdbcType=TINYINT},
-      </if>
-    </trim>
-  </insert>
-  <select id="countByExample" parameterType="com.ikoko.top.word.entity.ArticleExample" resultType="java.lang.Integer" >
-    select count(*) from article
-    <if test="_parameter != null" >
-      <include refid="Example_Where_Clause" />
-    </if>
-  </select>
-  <update id="updateByExampleSelective" parameterType="map" >
-    update article
-    <set >
-      <if test="record.id != null" >
-        id = #{record.id,jdbcType=BIGINT},
-      </if>
-      <if test="record.title != null" >
-        title = #{record.title,jdbcType=VARCHAR},
-      </if>
-      <if test="record.mp3 != null" >
-        mp3 = #{record.mp3,jdbcType=LONGVARBINARY},
-      </if>
-      <if test="record.status != null" >
-        status = #{record.status,jdbcType=TINYINT},
-      </if>
-    </set>
-    <if test="_parameter != null" >
-      <include refid="Update_By_Example_Where_Clause" />
-    </if>
-  </update>
-  <update id="updateByExample" parameterType="map" >
-    update article
-    set id = #{record.id,jdbcType=BIGINT},
-      title = #{record.title,jdbcType=VARCHAR}
-    <if test="_parameter != null" >
-      <include refid="Update_By_Example_Where_Clause" />
-    </if>
-  </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.ikoko.top.word.entity.Article" >
-    update article
-    <set >
-      <if test="title != null" >
-        title = #{title,jdbcType=VARCHAR},
-      </if>
-      <if test="mp3 != null" >
-        title = #{mp3,jdbcType=LONGVARBINARY},
-      </if>
-      <if test="status != null" >
-        title = #{status,jdbcType=TINYINT},
-      </if>
-    </set>
-    where id = #{id,jdbcType=BIGINT}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="com.ikoko.top.word.entity.Article" >
-    update article
-    set title = #{title,jdbcType=VARCHAR},
-      status = #{status,jdbcType=BIT},
-      word_num = #{wordNum,jdbcType=INTEGER}
-    where id = #{id,jdbcType=BIGINT}
-  </update>
+    </select>
+    
+    <select id="get" resultType="com.ikoko.top.word.entity.Article">
+        SELECT 
+            <include refid="articleColumns"/>
+        FROM w_article WHERE status='0' and id = #{id}
+    </select>
 </mapper>

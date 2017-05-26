@@ -17,6 +17,7 @@
 package com.ikoko.top.word.controller;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -80,6 +81,7 @@ public class BaseController {
             response.setHeader("Pragma", "No-cache");
             response.setHeader("Cache-Control", "no-cache");
             response.setDateHeader("Expires", 0);
+            OutputStream out = response.getOutputStream();
             response.getOutputStream().write(mp3);
         } catch (JsonProcessingException e) {
             e.printStackTrace();

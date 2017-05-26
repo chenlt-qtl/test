@@ -1,25 +1,15 @@
 package com.ikoko.top.word.entity;
 
-public class Article {
-    private Long id;
+import com.ikoko.top.sys.entity.DataEntity;
+
+public class Article  extends DataEntity<Article> {
+    private static final long serialVersionUID = 1L;
     
     private byte[] mp3;
-
     private String title;
-    
     private int hasMp3;
-    
-    private int status;
-    
     private Integer wordNum;
     
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
     public String getTitle() {
         return title;
     }
@@ -42,14 +32,6 @@ public class Article {
 
     public void setHasMp3(int hasMp3) {
         this.hasMp3 = hasMp3;
-    }
-
-    public int getStatus() {
-        return status;
-    }
-
-    public void setStatus(int status) {
-        this.status = status;
     }
 
     public Integer getWordNum() {

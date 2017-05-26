@@ -10,6 +10,9 @@
 <link rel="stylesheet" href="${ctxStatic}/3rd-lib/amazeui/css/amazeui.min.css" />
 <link rel="stylesheet" href="${ctxStatic}/3rd-lib/amazeui-color/color.min.css">
 <link rel="stylesheet" href="${ctxStatic}/assets/css/app.css">
+
+<link href="<c:url value="/common/default_style.css"/>" rel="stylesheet">
+
 <script src="${ctxStatic}/3rd-lib/jquery/2.2.3/jquery.min.js"></script>
 <style>
     .color-form-group{margin: 0;}

@@ -34,8 +34,8 @@
                                                 
                                                 <c:if test="${article.hasMp3==1}">
                                                     <a href="${ctx}/article/getMp3?id=${article.id}"
-                                                       onclick="play(this.href)" title="发音"><span
-                                                            class="oper oper-play articleMp3"></span></a>
+                                                       onclick="return play(this.href,this)" title="发音"><span
+                                                            class="oper oper-play"></span></a>
                                                 </c:if>
                                             </td>
                                         </tr>
@@ -182,12 +182,20 @@
     	});
     })
     
-    function play(href){
-        var audio = document.getElementById("audio");
-        audio.src = href;
-        audio.play();
+    function play(href,a){
+		var span = $(a).children("span");
+		var audio = document.getElementById("audio");
+		if($(span).attr("class")=="oper oper-pause"){
+			audio.pause();
+	        $(span).attr("class","oper oper-play");
+		}else{
+	        audio.src = href;
+	        audio.play();
+	        $(span).attr("class","oper oper-pause");
+		}
+        return false;
 	}
-    
+	
     function startRecite(){
 		var record = articleGrid.getSelected();
 		window.open("${ctx}/article/recite?id="+wordId);

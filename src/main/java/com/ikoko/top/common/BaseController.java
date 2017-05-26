@@ -1,5 +1,12 @@
 package com.ikoko.top.common;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,9 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 /**
  * 基础控制器类
@@ -136,4 +141,28 @@ public abstract class BaseController {
 		redirectAttributes.addFlashAttribute("msg", sb.toString());
 	}
 
+	
+    public String writeMp3(HttpServletResponse response, byte[] mp3) {
+        try {
+            response.reset();
+            String fullContentType = "audio/mp3";
+            response.setContentType(fullContentType);
+            response.setHeader("Pragma", "No-cache");
+            response.setHeader("Cache-Control", "no-cache");
+            response.setDateHeader("Expires", 0);
+            response.getOutputStream().write(mp3);
+            return null;
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+    
+    public void writeSuccess(HttpServletResponse response) {
+        Map map = new HashMap();
+        map.put("status", "success");
+        renderString(response, map);
+    }
 }

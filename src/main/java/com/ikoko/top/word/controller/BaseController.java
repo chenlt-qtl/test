@@ -82,7 +82,8 @@ public class BaseController {
             response.setHeader("Cache-Control", "no-cache");
             response.setDateHeader("Expires", 0);
             OutputStream out = response.getOutputStream();
-            response.getOutputStream().write(mp3);
+            out.write(mp3);
+            out.close();
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         } catch (IOException e) {

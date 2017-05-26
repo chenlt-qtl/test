@@ -27,6 +27,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.ikoko.top.common.BaseController;
 import com.ikoko.top.common.Page;
 import com.ikoko.top.common.utils.UserUtils;
 import com.ikoko.top.word.entity.Article;
@@ -40,7 +41,7 @@ import com.ikoko.top.word.util.RequestUtil;
  */
 @Controller
 @RequestMapping("${adminPath}/article")
-public class ArticleController extends BaseController{
+public class ArticleController extends BaseController {
 	@Autowired
     private ArticleService articleService;
     
@@ -58,37 +59,36 @@ public class ArticleController extends BaseController{
     }
     
     @RequestMapping(value = "/getArticlesPage")
-    public void getArticlesPage() throws IOException{
+    public void getArticlesPage(HttpServletResponse response, HttpServletRequest request) throws IOException{
     	List list = articleService.getArticleByPage(RequestUtil.getParameterMap(request));
     	Map map = new HashMap<>();
     	map.put("rows", list);
         map.put("results", list.size());
-    	writeResponse(map);
+    	renderString(response, map);
     }
     
     @RequestMapping(value = "/delete")
-    public void delete(){
+    public void delete(HttpServletResponse response, HttpServletRequest request){
         Object id = request.getParameter("id");
         if(id != null){
             articleService.delete(String.valueOf(id));
-            writeSuccess();
+            writeSuccess(response);
         }
     }
     
     @RequestMapping(value = "/getMp3")
-    public String getMp3() {
+    public void getMp3(HttpServletResponse response, HttpServletRequest request) {
         Object id = request.getParameter("id");
         if(id != null){
             Article article = articleService.get(String.valueOf(id));
             if(article.getMp3()!=null){
-                writeMp3(article.getMp3());
+                writeMp3(response,article.getMp3());
             }
         }
-        return null;
     }
     
     @RequestMapping(value = "/enterLevel")
-    public void enterLevel() {//进入关卡页面
+    public void enterLevel(HttpServletResponse response, HttpServletRequest request) {//进入关卡页面
         Object id = request.getParameter("id");
         if(id != null){
             Article article = articleService.getByIdWithoutMp3(String.valueOf(id));
@@ -97,7 +97,7 @@ public class ArticleController extends BaseController{
             Map map = new HashMap<>();
             map.put("wordNum", wordNum);
             map.put("level", level);
-            writeResponse(map);
+            renderString(response, map);
         }
     }
 }

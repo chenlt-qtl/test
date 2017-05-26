@@ -1,167 +1,214 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ include file="/WEB-INF/view/include/taglib.jsp" %>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>增加文章</title>
-<%@ include file="/common/header.jsp"%>
-<script src='<c:url value="/common/jquery.form.min.js"/>'></script>
+    <title>文章管理</title>
+    <%@ include file="../../include/head.jsp" %>
 </head>
 <body>
-	<div id='addDiv'>
-		<form id='articleForm'>
-			名称:<input type='text' name="title" value='123' data-rules="{required:true}" /><br/>
-			内容：<textarea name='content' value=" I'll be fine, alright? Really, everyone. I hope she'll be very happy. "  data-rules="{required:true}" ></textarea><br/>
-			<input id='trans' type='button' value='提交'>
-		</form>
-	</div>
-	<div id='showDiv' style='display:none'>
-		名称:<span name="title"></span><br/>
-		内容：<span name="content"></span><br/>
-		<form id='newWordForm' method="post" enctype="multipart/form-data">
-		  <input id='mp3' type='file' accept="audio/mpeg" name="mp3"/>
-		</form>
-		<input id='add' type='button' value='加入生词本'>
-	</div>
-	
+<script src="${ctxStatic}/assets/js/theme.js"></script>
+<div class="am-g tpl-g">
+    <!-- 内容区域 -->
+                    <div class="am-u-sm-12 am-u-md-12 am-u-lg-9">
+                    <div class="widget am-cf">
+                        <div class="widget-head am-cf">
+                            <div class="widget-title am-fl">文章列表</div>
+                        </div>
+                        <div class="widget-body am-fr">
+                            <div class="am-u-sm-12 am-u-md-3 am-u-lg-3">
+                                <div class="am-btn-toolbar">
+                                    <div class="am-btn-group am-btn-group-xs">
+                                        <shiro:hasPermission name="sys:user:create">
+                                            <button type="button" class="am-btn am-btn-default am-btn-success"
+                                                    onclick="openModel(false,'${ctx}/article/add')"><span class="am-icon-plus"></span> 新增
+                                            </button></shiro:hasPermission>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="am-u-sm-12">
+                                <table id="contentTable" class="am-table am-table-compact am-table-striped tpl-table-black">
+                                    <thead>
+                                    <tr>
+                                        <th>文章名</th>
+                                        <th>单词数</th>
+                                        <th>操作</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <c:forEach items="${page.list}" var="article" varStatus="status">
+                                        <tr>
+                                            <td>${article.title}</td>
+                                            <td>${article.wordNum}</td>
+                                            <td>
+                                                
+                                                <c:if test="${article.hasMp3==1}">
+                                                    <a href="${ctx}/article/getMp3?id=${article.id}"
+                                                       onclick="return play(this.href,this)" title="发音"><span
+                                                            class="oper oper-play"></span></a>
+                                                </c:if>
+                                            </td>
+                                        </tr>
+                                    </c:forEach>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="am-u-lg-12 am-cf">
+                                <%@ include file="../../utils/pagination.jsp" %>
+                            </div>
+                      </div>
+                    </div>
+                </div>
+                
+    <div class='article'>
+        <div id='article' class='article-content'>
+        </div>
+        <div class='bar-div'>
+           <div id="bar" class='bar'></div> 
+        </div>
+    </div>
+    
+    <div id='wordGrid' style="float:left;"></div>
+    
+    <audio id = 'audio'></audio>
+</div>
+<%@ include file="../../include/bottom.jsp"%>
 </body>
 <script type="text/javascript">
-//window.location="${pageContext.request.contextPath}/page/chart.html";
-$(function(){
-	var articleForm;
-	BUI.use(['bui/form'],function (Form) {
-		articleForm = new Form.Form({srcNode : '#articleForm'});
-		articleForm.render();
-	})
-	$('#trans').on('click', function (params) {
-		if(articleForm.isValid()){
-			$("#addDiv").hide();
-			$("#showDiv [name='title']").html($("#addDiv [name='title']").val());
-			var content = $("#addDiv [name='content']").val();
-			var html = "";
-			var patt=new RegExp("^[a-zA-Z]+$");
-			var patt1=new RegExp("^[a-zA-Z]+[.,:;?!]{1}$");
-			var patt2=new RegExp("^[.,:;?!]{1}[a-zA-Z]+$");
-			var patt3=new RegExp("^[\"\']{1}[a-zA-Z]+[\"\']{1}$");
-			var patt4=new RegExp("[a-zA-Z]");
-			$.each(content.split(/[.;?!\r]+/),function(){
-				html += '<span class="sentence">';
-				html += "<span class='original'>"+this+"</span>"
-				$.each(this.split(" "),function(){ 
-					var word = "";
-					var letters = this;
-					var available = true;
-					$.each(letters.split(""),function(index){
-						
-						if(patt4.test(this)){
-							word += this;
-						}else if(this=='\''&&word.length!=0){//中间有' 前后字母都不要
-							available = false;
-							word += this;
-						}else{ 
-							if(word.length!=0){
-								if(available){
-									html += "<span class=word>"+word+"</span>";
-								}else{
-									html += word;
-								}
-							}
-							available = true;
-							html += this;
-							word = "";
-						}
-						
-						if(index==letters.length-1){
-							if(word.length!=0){
-								if(available){
-									html += "<span class=word>"+word+"</span>";
-								}else{
-									html += word;
-								}
-							}
-							available = true;
-							word = "";
-						}
-					})
-					html += " ";
-				})
-				
-				html += '</span>';
-			})
-			$("#showDiv [name='content']").html(content+"<br\/><br\/><br\/>"+html);
-			$("#showDiv").show();
-			$(".word").on('click', function (params) {
-				$(this).removeClass('word');
-				$(this).addClass('newWord');
-			});
-			$(".newWord").on('click', function (params) {
-				$(this).removeClass('newWord');
-				$(this).addClass('word');
-			});
-		}
-	});
-	
-	var options = {   
-		url: "${ctx}/sentence/save",  
-		resetForm: true,   
-		dataType: 'json',
-		success:function(data){
-			Mask.unmaskElement('body'); 
-			var status = data["status"];
-            if(status=="success"){
-                BUI.Message.Alert('保存成功', function(){window.location.href="${ctx}/article/articleList"; },'success');
-            }else{
-            	BUI.Message.Alert(data["msg"]);
-            }
-		}
-	}; 
-	
-	$('#add').on('click', function (params) {
-		Mask.maskElement('body',"保存中...");
-		var hasNew = false;
-		var sentenceIndex = 0;
-		$("#showDiv .sentence").each(function(index,element) {
-			$("#newWordForm").append($("<input name='sentences["+sentenceIndex+"].content' value='"+HTMLEncode($(this).children('.original').html())+"'/>"));
-			var wordIndex = 0;
-			$(this).children(".newWord").each(function(wordIndex){
-				$("#newWordForm").append($("<input name='sentences["+sentenceIndex+"].wordList["+wordIndex+"].wordName' value='"+HTMLEncode($(this).html())+"'/>"));
-				wordIndex++;
-			});
-			sentenceIndex++;
-			hasNew = true;
-		});
-		if(hasNew){
-			$("#newWordForm").append($("<input name='title' value='"+$("#showDiv [name='title']").html()+"'/>"));
-			$("#newWordForm").ajaxSubmit(options); 
-		}else{
-			$("#newWordForm").children().each(function(){$(this).remove();});
-		}
-	});
-	
-	// 替换特殊字符
-	function HTMLEncode(text){
-	 text = text.replace(/&/g, "&amp;") ;
-	 text = text.replace(/"/g, "&quot;") ;
-	 text = text.replace(/</g, "&lt;") ;
-	 text = text.replace(/>/g, "&gt;") ;
-	 text = text.replace(/'/g, "&#146;") ;
-	 text = text.replace(/\ /g,"&nbsp;");
-	 text = text.replace(/\n/g,"<br>");
-	 text = text.replace(/\t/g,"&nbsp;&nbsp;&nbsp;&nbsp;");
-	 return text;
-	}
-	//还原特殊字符
-	function TEXTAREAcode(text){
-	 text = text.replace(/\n/g,"");
-	 text = text.replace(/&amp;/g, "&") ;
-	 text = text.replace(/&quot;/g, "\"") ;
-	 text = text.replace(/&lt;/g, "<") ;
-	 text = text.replace(/&gt;/g, ">") ;
-	 text = text.replace(/&#146;/g, "\'") ;
-	 text = text.replace(/&nbsp;/g," ");
-	 text = text.replace(/<br>/g,"\n");
-	 return text;
-	}
-})
+    
+     var buttonGroup = new Toolbar.Bar({
+         elCls : 'button-group',  //设置工具栏应用的样式
+         defaultChildCfg : {
+           elCls : 'button button-small' //设置按钮样式
+         },
+         children : [ //按钮
+           {content : '开始背诵',handler : startRecite}
+         ],
+         render : '#bar'
+    });
+    buttonGroup.render();
+    
+    var articleStore = new Data.Store({
+        url :"${pageContext.request.contextPath}/article/getArticlesPage",
+        pageSize : 5
+    });
+    
+    var articleGrid = new Grid.Grid({
+        height:300,
+        render:'#articleGrid',
+        columns : [ 
+            {title : '文章名',width : 300,sortable : false,dataIndex : 'title'},
+            {title : '单词数',width : 300,sortable : false,dataIndex : 'wordNum'},
+            {title : '操作',width : 300,sortable : false,dataIndex : 'id',
+                renderer : function(value, obj) {
+                    var str = '<span class="oper oper-delete" objId='+value+'></span>&nbsp;&nbsp;&nbsp;&nbsp;'+
+                       '<span class="oper oper-detail article-detail" objId='+value+'></span>'
+                    if(obj["hasMp3"]){
+                        str = '<span class="oper oper-play articleMp3" objId='+value+'></span>'+
+                        '&nbsp;&nbsp;&nbsp;&nbsp;'+str;
+                    }
+                    return str;
+            }}
+        ],
+        loadMask: true, //加载数据时显示屏蔽层
+        store: articleStore,
+        // 底部工具栏
+        bbar:{
+            pagingBar:true
+        }
+    });
+    articleGrid.render();
+    articleStore.load();
+    
+    var wordStore = new Data.Store({
+        url :"${ctx}/word/getWordByArticle",
+        pageSize : 5
+    });
+    var wordGrid = new Grid.Grid({
+        width:400,
+        height:270,
+        render:'#wordGrid',
+        columns : [ 
+            {title : '单词',width : 100,sortable : false,dataIndex : 'wordName'},
+            {title : '音标',width : 100,sortable : false,dataIndex : 'phAm'},
+            {title : '操作',width : 200,sortable : false,dataIndex : 'id',
+                renderer : function(value, obj) {
+                return '<span class="oper oper-play wordMp3" objId='+value+'></span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="oper oper-detail word-detail" objId='+value+'></span>';
+            }}
+        ],
+        loadMask: true, //加载数据时显示屏蔽层
+        store: wordStore,
+        // 底部工具栏
+        bbar:{
+            pagingBar:true
+        }
+    });
+    wordGrid.render();
+    
+    $(".wordMp3").live("click",function(){
+        var wordId = $(this).attr("objId");
+        var audio = document.getElementById("audio");
+        audio.src = "${ctx}/word/getMp3?id="+wordId;
+        audio.play();
+    })
+    
+    $(".articleMp3").live("click",function(){
+        var articleId = $(this).attr("objId");
+        var audio = document.getElementById("audio");
+        audio.src = "${ctx}/article/getMp3?id="+articleId;
+        audio.play();
+    })
+    
+    $(".article-detail").live("click",function(){
+        var articleId = $(this).attr("objId");
+        Util.doAjaxPost("${ctx}/sentence/getContent",{id:articleId},function(text){
+            var content = jQuery.parseJSON(text)["content"];
+            $("#article").html(content);
+        });
+        wordStore.load({articleId:articleId});
+    })
+    
+    $(".word-detail").live("click",function(){
+        var wordId = $(this).attr("objId");
+        window.open("${ctx}/word/detail?id="+wordId);
+    })
+    
+    $(".oper-delete").live("click",function(){
+        var articleId = $(this).attr("objId");
+        BUI.Message.Confirm('确认要删除吗？',function(){
+            Mask.maskElement('body',"删除中...");
+            Util.doAjaxPost("${ctx}/article/delete",{id:articleId},function(text){
+                Mask.unmaskElement('body'); 
+                var status = jQuery.parseJSON(text)["status"];
+                if(status=="success"){
+                    BUI.Message.Alert('操作成功');
+                    articleStore.load();
+                }else{
+                    BUI.Message.Alert(data["msg"]);
+                }
+            });
+        });
+    })
+    
+    function play(href,a){
+        var span = $(a).children("span");
+        var audio = document.getElementById("audio");
+        if($(span).attr("class")=="oper oper-pause"){
+            audio.pause();
+            $(span).attr("class","oper oper-play");
+        }else{
+            audio.src = href;
+            audio.play();
+            $(span).attr("class","oper oper-pause");
+        }
+        return false;
+    }
+    
+    function startRecite(){
+        var record = articleGrid.getSelected();
+        window.open("${ctx}/article/recite?id="+wordId);
+    }
+    
 </script>
 </html>

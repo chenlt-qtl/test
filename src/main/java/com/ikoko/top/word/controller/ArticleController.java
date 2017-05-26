@@ -47,7 +47,7 @@ public class ArticleController extends BaseController {
     
     @RequestMapping(value = "/add")
     public String enterAdd(HttpServletRequest request, HttpServletResponse response) {
-    	return "addArticle";
+    	return "word/article/edit";
     }
     
     @RequestMapping(value = "/articleList")

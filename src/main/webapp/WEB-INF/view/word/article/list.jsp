@@ -12,9 +12,19 @@
 	                <div class="am-u-sm-12 am-u-md-12 am-u-lg-9">
                     <div class="widget am-cf">
                         <div class="widget-head am-cf">
-                            <div class="widget-title am-fl">用户列表</div>
+                            <div class="widget-title am-fl">文章列表</div>
                         </div>
-                        
+                        <div class="widget-body am-fr">
+                            <div class="am-u-sm-12 am-u-md-3 am-u-lg-3">
+                                <div class="am-btn-toolbar">
+                                    <div class="am-btn-group am-btn-group-xs">
+                                        <shiro:hasPermission name="sys:user:create">
+                                            <button type="button" class="am-btn am-btn-default am-btn-success"
+                                                    onclick="openModel(false,'${ctx}/article/add')"><span class="am-icon-plus"></span> 新增
+                                            </button></shiro:hasPermission>
+                                    </div>
+                                </div>
+                            </div>
 
                             <div class="am-u-sm-12">
                                 <table id="contentTable" class="am-table am-table-compact am-table-striped tpl-table-black">
@@ -47,8 +57,7 @@
                             <div class="am-u-lg-12 am-cf">
                                 <%@ include file="../../utils/pagination.jsp" %>
                             </div>
-
-                        </div>
+                      </div>
                     </div>
                 </div>
                 

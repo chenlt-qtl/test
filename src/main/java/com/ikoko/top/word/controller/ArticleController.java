@@ -47,7 +47,7 @@ public class ArticleController extends BaseController {
     
     @RequestMapping(value = "/add")
     public String enterAdd(HttpServletRequest request, HttpServletResponse response) {
-    	return "word/article/edit";
+    	return "word/article/editArticle";
     }
     
     @RequestMapping(value = "/articleList")
@@ -55,7 +55,7 @@ public class ArticleController extends BaseController {
         article.setUser(UserUtils.getLoginUser());
         page.setEntity(article);
         model.addAttribute("page", page.setList(articleService.findPage(page)));
-    	return "word/article/list";
+    	return "word/article/listArticle";
     }
     
     @RequestMapping(value = "/getArticlesPage")

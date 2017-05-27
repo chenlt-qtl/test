@@ -1,41 +1,96 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ include file="/WEB-INF/view/include/taglib.jsp"%>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>增加文章</title>
-<%@ include file="/common/header.jsp"%>
-<script src='<c:url value="/common/jquery.form.min.js"/>'></script>
+    <title>文章编辑</title>
+    <%@ include file="../../include/head.jsp"%>
+    <style>
+        .tpl-content-wrapper{margin-left:0}
+    </style>
 </head>
 <body>
-    <div id='addDiv'>
-        <form id='articleForm'>
-            名称:<input type='text' name="title" value='123' data-rules="{required:true}" /><br/>
-            内容：<textarea name='content' value=" I'll be fine, alright? Really, everyone. I hope she'll be very happy. "  data-rules="{required:true}" ></textarea><br/>
-            <input id='trans' type='button' value='提交'>
-        </form>
+<script src="${ctxStatic}/assets/js/theme.js"></script>
+<div class="am-g tpl-g">
+    <!-- 内容区域 -->
+    <div class="tpl-content-wrapper">
+        <div class="row-content am-cf">
+            <div class="row">
+                <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+                    <div class="widget am-cf">
+                        <div class="widget-head am-cf">
+                            <div class="widget-title am-fl">文章信息</div>
+                        </div>
+                        <div class="widget-body am-fr" id='addDiv'>
+                            <form id="addForm" class="am-form tpl-form-border-form" data-am-validator modelAttribute="article" method="post">
+                                <input type="hidden" name="id" value="${article.id}" />
+                                <div class="am-form-group">
+                                    <label class="am-u-sm-3 am-form-label"><span class="error">*</span>名称：</label>
+                                    <div class="am-u-sm-9">
+                                        <input type="text" name="title" minlength="3" placeholder="名称（至少3个字符）"
+                                               value="${article.title}" required />
+                                    </div>
+                                </div>
+                                <div class="am-form-group">
+                                    <label class="am-u-sm-3 am-form-label">内容：</label>
+                                    <div class="am-u-sm-9">
+                                        <textarea name="content" class="" rows="5">${article.content}</textarea>
+                                    </div>
+                                </div>
+                                <div class="am-form-group">
+	                                <div class="am-u-sm-9 am-u-sm-push-3">
+	                                    <button type="button" id='trans' class="am-btn am-btn-primary">提交</button>
+	                                    <button type="button" class="am-btn am-btn-danger" onclick="closeModel(false)">关闭</button>
+	                                </div>
+	                            </div>
+                            </form>
+                        </div>
+                        
+                        <div class="widget-body am-fr" id='showDiv' style='display:none'>
+                            <form id="showForm" class="am-form tpl-form-border-form" data-am-validator modelAttribute="article" action="${ctx}/article/<c:choose><c:when test="${empty article.id}">create</c:when><c:otherwise>update</c:otherwise></c:choose>" method="post">
+                                <input type="hidden" name="id" value="${article.id}" />
+                                <div class="am-form-group">
+                                    <label class="am-u-sm-3 am-form-label">名称：</label>
+                                    <div class="am-u-sm-9">
+                                        <span name="title"></span>
+                                    </div>
+                                </div>
+                                <div class="am-form-group">
+                                    <label class="am-u-sm-3 am-form-label">内容：</label>
+                                    <div class="am-u-sm-9">
+                                        <span name="content"></span>
+                                    </div>
+                                </div>
+                                <div class="am-form-group am-form-file">
+								  <i class="am-icon-cloud-upload"></i> 选择要上传的文件
+								  <input type="file" multiple>
+								</div
+                            </form>
+                            <div class="am-form-group">
+                                <div class="am-u-sm-9 am-u-sm-push-3">
+                                    <button type="button" id='add' class="am-btn am-btn-primary">保存1</button>
+                                    <button type="button" class="am-btn am-btn-danger" onclick="closeModel(false)">关闭</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div id='showDiv' style='display:none'>
-        名称:<span name="title"></span><br/>
-        内容：<span name="content"></span><br/>
-        <form id='newWordForm' method="post" enctype="multipart/form-data">
-          <input id='mp3' type='file' accept="audio/mpeg" name="mp3"/>
-        </form>
-        <input id='add' type='button' value='加入生词本'>
-    </div>
-    
-</body>
+</div>
+<%@ include file="../../include/bottom.jsp"%>
 <script type="text/javascript">
-//window.location="${pageContext.request.contextPath}/page/chart.html";
-$(function(){
-    var articleForm;
-    BUI.use(['bui/form'],function (Form) {
-        articleForm = new Form.Form({srcNode : '#articleForm'});
-        articleForm.render();
-    })
+$(document).ready(function() {
     $('#trans').on('click', function (params) {
-        if(articleForm.isValid()){
-            $("#addDiv").hide();
+    	   
+    	   $.when($('#addForm').validator('isFormValid')).then(function() {
+    		alert(1)
+    		}, function() {
+    			alert(2)
+    		});
+
+	    	$("#addDiv").hide();
             $("#showDiv [name='title']").html($("#addDiv [name='title']").val());
             var content = $("#addDiv [name='content']").val();
             var html = "";
@@ -98,7 +153,6 @@ $(function(){
                 $(this).removeClass('newWord');
                 $(this).addClass('word');
             });
-        }
     });
     
     var options = {   
@@ -117,6 +171,7 @@ $(function(){
     }; 
     
     $('#add').on('click', function (params) {
+    	alert(1);
         Mask.maskElement('body',"保存中...");
         var hasNew = false;
         var sentenceIndex = 0;
@@ -162,6 +217,7 @@ $(function(){
      text = text.replace(/<br>/g,"\n");
      return text;
     }
-})
+});
 </script>
+</body>
 </html>

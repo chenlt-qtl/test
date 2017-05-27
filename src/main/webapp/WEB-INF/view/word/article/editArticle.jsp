@@ -21,7 +21,7 @@
                             <div class="widget-title am-fl">文章信息</div>
                         </div>
                         <div class="widget-body am-fr" id='addDiv'>
-                            <form id="addForm" class="am-form tpl-form-border-form" data-am-validator modelAttribute="article" method="post">
+                            <form id="addForm" class="am-form tpl-form-border-form" action="return trans();" data-am-validator modelAttribute="article" method="post">
                                 <input type="hidden" name="id" value="${article.id}" />
                                 <div class="am-form-group">
                                     <label class="am-u-sm-3 am-form-label"><span class="error">*</span>名称：</label>
@@ -82,14 +82,9 @@
 <%@ include file="../../include/bottom.jsp"%>
 <script type="text/javascript">
 $(document).ready(function() {
-    $('#trans').on('click', function (params) {
-    	   
-    	   $.when($('#addForm').validator('isFormValid')).then(function() {
-    		alert(1)
-    		}, function() {
-    			alert(2)
-    		});
-
+//    $('#trans').on('click', function (params) {
+	function trans(){
+	    alert(1);		
 	    	$("#addDiv").hide();
             $("#showDiv [name='title']").html($("#addDiv [name='title']").val());
             var content = $("#addDiv [name='content']").val();
@@ -153,7 +148,7 @@ $(document).ready(function() {
                 $(this).removeClass('newWord');
                 $(this).addClass('word');
             });
-    });
+    }
     
     var options = {   
         url: "${ctx}/sentence/save",  

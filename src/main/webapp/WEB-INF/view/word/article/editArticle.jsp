@@ -6,6 +6,9 @@
     <%@ include file="../../include/head.jsp"%>
     <style>
         .tpl-content-wrapper{margin-left:0}
+        #showForm .am-form-label{
+            padding-top:0px;
+        }
     </style>
 </head>
 <body>
@@ -21,7 +24,7 @@
                             <div class="widget-title am-fl">文章信息</div>
                         </div>
                         <div class="widget-body am-fr" id='addDiv'>
-                            <form id="addForm" class="am-form tpl-form-border-form" action="return trans();" data-am-validator modelAttribute="article" method="post">
+                            <form id="addForm" class="am-form tpl-form-border-form" action="" data-am-validator modelAttribute="article" method="post">
                                 <input type="hidden" name="id" value="${article.id}" />
                                 <div class="am-form-group">
                                     <label class="am-u-sm-3 am-form-label"><span class="error">*</span>名称：</label>
@@ -37,16 +40,16 @@
                                     </div>
                                 </div>
                                 <div class="am-form-group">
-	                                <div class="am-u-sm-9 am-u-sm-push-3">
-	                                    <button type="button" id='trans' class="am-btn am-btn-primary">提交</button>
-	                                    <button type="button" class="am-btn am-btn-danger" onclick="closeModel(false)">关闭</button>
-	                                </div>
-	                            </div>
+                                    <div class="am-u-sm-9 am-u-sm-push-3">
+                                        <button type="submit" class="am-btn am-btn-primary">提交</button>
+                                        <button type="button" class="am-btn am-btn-danger" onclick="closeModel(false)">关闭</button>
+                                    </div>
+                                </div>
                             </form>
                         </div>
                         
                         <div class="widget-body am-fr" id='showDiv' style='display:none'>
-                            <form id="showForm" class="am-form tpl-form-border-form" data-am-validator modelAttribute="article" action="${ctx}/article/<c:choose><c:when test="${empty article.id}">create</c:when><c:otherwise>update</c:otherwise></c:choose>" method="post">
+                            <form id="showForm" class="am-form tpl-form-border-form" data-am-validator modelAttribute="article" action="${ctx}/sentence/save" method="post" enctype="multipart/form-data">
                                 <input type="hidden" name="id" value="${article.id}" />
                                 <div class="am-form-group">
                                     <label class="am-u-sm-3 am-form-label">名称：</label>
@@ -60,17 +63,20 @@
                                         <span name="content"></span>
                                     </div>
                                 </div>
-                                <div class="am-form-group am-form-file">
-								  <i class="am-icon-cloud-upload"></i> 选择要上传的文件
-								  <input type="file" multiple>
-								</div
-                            </form>
-                            <div class="am-form-group">
-                                <div class="am-u-sm-9 am-u-sm-push-3">
-                                    <button type="button" id='add' class="am-btn am-btn-primary">保存1</button>
-                                    <button type="button" class="am-btn am-btn-danger" onclick="closeModel(false)">关闭</button>
-                                </div>
-                            </div>
+								<div class="am-form-group am-form-file">
+									<label class="am-u-sm-3 am-form-label">MP3：</label>
+									<div class="am-u-sm-9">
+										<i class="am-icon-cloud-upload"></i><span id='mp3_label'> <c:choose><c:when test="${1==article.hasMp3}">已选择</c:when><c:otherwise>请选择</c:otherwise></c:choose></span>
+										 <input type="file" name="mp3" accept="audio/mpeg" multiple id='mp3'>
+									</div>
+								</div>
+								<div class="am-form-group">
+	                                <div class="am-u-sm-9 am-u-sm-push-3">
+	                                    <button type="submit" class="am-btn am-btn-primary">保存</button>
+	                                    <button type="button" class="am-btn am-btn-danger" onclick="closeModel(false)">关闭</button>
+	                                </div>
+	                            </div>
+							</form>
                         </div>
                         
                     </div>
@@ -82,79 +88,102 @@
 <%@ include file="../../include/bottom.jsp"%>
 <script type="text/javascript">
 $(document).ready(function() {
-//    $('#trans').on('click', function (params) {
-	function trans(){
-	    alert(1);		
-	    	$("#addDiv").hide();
-            $("#showDiv [name='title']").html($("#addDiv [name='title']").val());
-            var content = $("#addDiv [name='content']").val();
-            var html = "";
-            var patt=new RegExp("^[a-zA-Z]+$");
-            var patt1=new RegExp("^[a-zA-Z]+[.,:;?!]{1}$");
-            var patt2=new RegExp("^[.,:;?!]{1}[a-zA-Z]+$");
-            var patt3=new RegExp("^[\"\']{1}[a-zA-Z]+[\"\']{1}$");
-            var patt4=new RegExp("[a-zA-Z]");
-            $.each(content.split(/[.;?!\r]+/),function(){
-                html += '<span class="sentence">';
-                html += "<span class='original'>"+this+"</span>"
-                $.each(this.split(" "),function(){ 
-                    var word = "";
-                    var letters = this;
-                    var available = true;
-                    $.each(letters.split(""),function(index){
-                        
-                        if(patt4.test(this)){
-                            word += this;
-                        }else if(this=='\''&&word.length!=0){//中间有' 前后字母都不要
-                            available = false;
-                            word += this;
-                        }else{ 
-                            if(word.length!=0){
-                                if(available){
-                                    html += "<span class=word>"+word+"</span>";
-                                }else{
-                                    html += word;
-                                }
-                            }
-                            available = true;
-                            html += this;
-                            word = "";
-                        }
-                        
-                        if(index==letters.length-1){
-                            if(word.length!=0){
-                                if(available){
-                                    html += "<span class=word>"+word+"</span>";
-                                }else{
-                                    html += word;
-                                }
-                            }
-                            available = true;
-                            word = "";
-                        }
-                    })
-                    html += " ";
-                })
-                
-                html += '</span>';
-            })
-            $("#showDiv [name='content']").html(content+"<br\/><br\/><br\/>"+html);
-            $("#showDiv").show();
-            $(".word").on('click', function (params) {
-                $(this).removeClass('word');
-                $(this).addClass('newWord');
-            });
-            $(".newWord").on('click', function (params) {
-                $(this).removeClass('newWord');
-                $(this).addClass('word');
-            });
+    //消息提醒
+    var msg = '${msg}';
+    if(msg!=''){
+        showMsg(msg);
+        if(msg=="保存成功"){
+            closeModel(true);//关闭窗口
+        }
     }
+    initSelectValue(true);//初始化下拉框的值
+	
+	var file;
+	
+	var pullfiles=function(){ 
+	    var fileInput = document.querySelector("#mp3");
+	    file = fileInput.files[0];
+	    if(file != null){
+	    	$("#mp3_label").html(" "+file.name);
+	    }
+	}
+
+	document.querySelector("#mp3").onchange=pullfiles;
+
+	$("#addForm").submit(function(){
+		$("#addDiv").hide();
+        $("#showDiv [name='title']").html($("#addDiv [name='title']").val());
+        var content = $("#addDiv [name='content']").val();
+        var html = "";
+        var patt=new RegExp("^[a-zA-Z]+$");
+        var patt1=new RegExp("^[a-zA-Z]+[.,:;?!]{1}$");
+        var patt2=new RegExp("^[.,:;?!]{1}[a-zA-Z]+$");
+        var patt3=new RegExp("^[\"\']{1}[a-zA-Z]+[\"\']{1}$");
+        var patt4=new RegExp("[a-zA-Z]");
+        $.each(content.split(/[.;?!\r]+/),function(){
+            html += '<span class="sentence">';
+            html += "<span class='original'>"+this+"</span>"
+            $.each(this.split(" "),function(){ 
+                var word = "";
+                var letters = this;
+                var available = true;
+                $.each(letters.split(""),function(index){
+                    
+                    if(patt4.test(this)){
+                        word += this;
+                    }else if(this=='\''&&word.length!=0){//中间有' 前后字母都不要
+                        available = false;
+                        word += this;
+                    }else{ 
+                        if(word.length!=0){
+                            if(available){
+                                html += "<span class=word>"+word+"</span>";
+                            }else{
+                                html += word;
+                            }
+                        }
+                        available = true;
+                        html += this;
+                        word = "";
+                    }
+                    
+                    if(index==letters.length-1){
+                        if(word.length!=0){
+                            if(available){
+                                html += "<span class=word>"+word+"</span>";
+                            }else{
+                                html += word;
+                            }
+                        }
+                        available = true;
+                        word = "";
+                    }
+                })
+                html += " ";
+            })
+            
+            html += '</span>';
+        })
+        $("#showDiv [name='content']").html(html);
+        $("#showDiv").show();
+        $(".word").on('click', function (params) {
+            $(this).removeClass('word');
+            $(this).addClass('newWord');
+        });
+        $(".newWord").on('click', function (params) {
+            $(this).removeClass('newWord');
+            $(this).addClass('word');
+        });
+        return false;
+	});
+	
     
     var options = {   
         url: "${ctx}/sentence/save",  
         resetForm: true,   
         dataType: 'json',
         success:function(data){
+        	alert(1);
             Mask.unmaskElement('body'); 
             var status = data["status"];
             if(status=="success"){
@@ -165,26 +194,30 @@ $(document).ready(function() {
         }
     }; 
     
-    $('#add').on('click', function (params) {
-    	alert(1);
-        Mask.maskElement('body',"保存中...");
+    $("#showForm").submit(function(){
+        if(file){
+        	if(file.length>102400000){
+	        	showMsg("文件不能大于100M");
+	        	return false;
+        	}else if(file.name.slice(-4)!=".mp3"&&file.name.slice(-4)!=".MP3"){
+        		showMsg("请选择mp3文件");
+                return false;
+        	}
+        }
         var hasNew = false;
         var sentenceIndex = 0;
         $("#showDiv .sentence").each(function(index,element) {
-            $("#newWordForm").append($("<input name='sentences["+sentenceIndex+"].content' value='"+HTMLEncode($(this).children('.original').html())+"'/>"));
+            $("#showForm").append($("<input name='sentences["+sentenceIndex+"].content' value='"+HTMLEncode($(this).children('.original').html())+"'/>"));
             var wordIndex = 0;
             $(this).children(".newWord").each(function(wordIndex){
-                $("#newWordForm").append($("<input name='sentences["+sentenceIndex+"].wordList["+wordIndex+"].wordName' value='"+HTMLEncode($(this).html())+"'/>"));
+                $("#showForm").append($("<input name='sentences["+sentenceIndex+"].wordList["+wordIndex+"].wordName' value='"+HTMLEncode($(this).html())+"'/>"));
                 wordIndex++;
             });
             sentenceIndex++;
             hasNew = true;
         });
         if(hasNew){
-            $("#newWordForm").append($("<input name='title' value='"+$("#showDiv [name='title']").html()+"'/>"));
-            $("#newWordForm").ajaxSubmit(options); 
-        }else{
-            $("#newWordForm").children().each(function(){$(this).remove();});
+            $("#showForm").append($("<input name='title' value='"+$("#showDiv [name='title']").html()+"'/>"));
         }
     });
     
@@ -200,18 +233,7 @@ $(document).ready(function() {
      text = text.replace(/\t/g,"&nbsp;&nbsp;&nbsp;&nbsp;");
      return text;
     }
-    //还原特殊字符
-    function TEXTAREAcode(text){
-     text = text.replace(/\n/g,"");
-     text = text.replace(/&amp;/g, "&") ;
-     text = text.replace(/&quot;/g, "\"") ;
-     text = text.replace(/&lt;/g, "<") ;
-     text = text.replace(/&gt;/g, ">") ;
-     text = text.replace(/&#146;/g, "\'") ;
-     text = text.replace(/&nbsp;/g," ");
-     text = text.replace(/<br>/g,"\n");
-     return text;
-    }
+
 });
 </script>
 </body>

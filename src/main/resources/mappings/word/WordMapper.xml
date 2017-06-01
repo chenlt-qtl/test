@@ -11,254 +11,41 @@
   <resultMap id="ResultMapWithBLOBs" type="com.ikoko.top.word.entity.Word" extends="BaseResultMap" >
     <result column="ph_am_mp3" property="phAmMp3" jdbcType="LONGVARBINARY" />
   </resultMap>
-  <sql id="Example_Where_Clause" >
-    <where >
-      <foreach collection="oredCriteria" item="criteria" separator="or" >
-        <if test="criteria.valid" >
-          <trim prefix="(" suffix=")" prefixOverrides="and" >
-            <foreach collection="criteria.criteria" item="criterion" >
-              <choose >
-                <when test="criterion.noValue" >
-                  and ${criterion.condition}
-                </when>
-                <when test="criterion.singleValue" >
-                  and ${criterion.condition} #{criterion.value}
-                </when>
-                <when test="criterion.betweenValue" >
-                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
-                </when>
-                <when test="criterion.listValue" >
-                  and ${criterion.condition}
-                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
-                    #{listItem}
-                  </foreach>
-                </when>
-              </choose>
-            </foreach>
-          </trim>
-        </if>
-      </foreach>
-    </where>
-  </sql>
-  <sql id="Update_By_Example_Where_Clause" >
-    <where >
-      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
-        <if test="criteria.valid" >
-          <trim prefix="(" suffix=")" prefixOverrides="and" >
-            <foreach collection="criteria.criteria" item="criterion" >
-              <choose >
-                <when test="criterion.noValue" >
-                  and ${criterion.condition}
-                </when>
-                <when test="criterion.singleValue" >
-                  and ${criterion.condition} #{criterion.value}
-                </when>
-                <when test="criterion.betweenValue" >
-                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
-                </when>
-                <when test="criterion.listValue" >
-                  and ${criterion.condition}
-                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
-                    #{listItem}
-                  </foreach>
-                </when>
-              </choose>
-            </foreach>
-          </trim>
-        </if>
-      </foreach>
-    </where>
-  </sql>
   <sql id="Base_Column_List" >
     id, word_name, ph_am, exchange, parts
   </sql>
   <sql id="Blob_Column_List" >
     ph_am_mp3
   </sql>
-  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="com.ikoko.top.word.entity.WordExample" >
-    select
-    <if test="distinct" >
-      distinct
-    </if>
-    <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
-    from word
-    <if test="_parameter != null" >
-      <include refid="Example_Where_Clause" />
-    </if>
-    <if test="orderByClause != null" >
-      order by ${orderByClause}
-    </if>
-  </select>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.ikoko.top.word.entity.WordExample" >
-    select
-    <if test="distinct" >
-      distinct
-    </if>
-    <include refid="Base_Column_List" />
-    from word
-    <if test="_parameter != null" >
-      <include refid="Example_Where_Clause" />
-    </if>
-    <if test="orderByClause != null" >
-      order by ${orderByClause}
-    </if>
-  </select>
   
-  <select id="selectByArticle" resultMap="BaseResultMap" parameterType="java.lang.String" >
-    select
-    <include refid="Base_Column_List" />
-    from word a where exists (select 1 from sentence_word_rel b where a.id = b.word_id and 
-        exists (select 1 from sentence c where c.id = b.sentence_id and c.article_id = #{articleId,jdbcType=VARCHAR}))
-
-  </select>
-  
-  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Long" >
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     ,
     <include refid="Blob_Column_List" />
-    from word
-    where id = #{id,jdbcType=BIGINT}
+    from w_word
+    where word_name = #{word_name}
+  </select>
+  <select id="selectByWordName" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from w_word
+    where word_name = #{word_name}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from word
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="com.ikoko.top.word.entity.WordExample" >
-    delete from word
-    <if test="_parameter != null" >
-      <include refid="Example_Where_Clause" />
-    </if>
-  </delete>
   <insert id="insert" parameterType="com.ikoko.top.word.entity.Word" useGeneratedKeys="true" keyProperty="id">
-    insert into word (id, word_name, ph_am, 
+    insert into w_word (id, word_name, ph_am, 
       exchange, parts, ph_am_mp3
       )
     values (#{id,jdbcType=BIGINT}, #{wordName,jdbcType=VARCHAR}, #{phAm,jdbcType=VARCHAR}, 
       #{exchange,jdbcType=VARCHAR}, #{parts,jdbcType=VARCHAR}, #{phAmMp3,jdbcType=LONGVARBINARY}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.ikoko.top.word.entity.Word" >
-    insert into word
-    <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        id,
-      </if>
-      <if test="wordName != null" >
-        word_name,
-      </if>
-      <if test="phAm != null" >
-        ph_am,
-      </if>
-      <if test="exchange != null" >
-        exchange,
-      </if>
-      <if test="parts != null" >
-        parts,
-      </if>
-      <if test="phAmMp3 != null" >
-        ph_am_mp3,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        #{id,jdbcType=BIGINT},
-      </if>
-      <if test="wordName != null" >
-        #{wordName,jdbcType=VARCHAR},
-      </if>
-      <if test="phAm != null" >
-        #{phAm,jdbcType=VARCHAR},
-      </if>
-      <if test="exchange != null" >
-        #{exchange,jdbcType=VARCHAR},
-      </if>
-      <if test="parts != null" >
-        #{parts,jdbcType=VARCHAR},
-      </if>
-      <if test="phAmMp3 != null" >
-        #{phAmMp3,jdbcType=LONGVARBINARY},
-      </if>
-    </trim>
-  </insert>
-  <select id="countByExample" parameterType="com.ikoko.top.word.entity.WordExample" resultType="java.lang.Integer" >
-    select count(*) from word
-    <if test="_parameter != null" >
-      <include refid="Example_Where_Clause" />
-    </if>
-  </select>
-  <update id="updateByExampleSelective" parameterType="map" >
-    update word
-    <set >
-      <if test="record.id != null" >
-        id = #{record.id,jdbcType=BIGINT},
-      </if>
-      <if test="record.wordName != null" >
-        word_name = #{record.wordName,jdbcType=VARCHAR},
-      </if>
-      <if test="record.phAm != null" >
-        ph_am = #{record.phAm,jdbcType=VARCHAR},
-      </if>
-      <if test="record.exchange != null" >
-        exchange = #{record.exchange,jdbcType=VARCHAR},
-      </if>
-      <if test="record.parts != null" >
-        parts = #{record.parts,jdbcType=VARCHAR},
-      </if>
-      <if test="record.phAmMp3 != null" >
-        ph_am_mp3 = #{record.phAmMp3,jdbcType=LONGVARBINARY},
-      </if>
-    </set>
-    <if test="_parameter != null" >
-      <include refid="Update_By_Example_Where_Clause" />
-    </if>
-  </update>
-  <update id="updateByExampleWithBLOBs" parameterType="map" >
-    update word
-    set id = #{record.id,jdbcType=BIGINT},
-      word_name = #{record.wordName,jdbcType=VARCHAR},
-      ph_am = #{record.phAm,jdbcType=VARCHAR},
-      exchange = #{record.exchange,jdbcType=VARCHAR},
-      parts = #{record.parts,jdbcType=VARCHAR},
-      ph_am_mp3 = #{record.phAmMp3,jdbcType=LONGVARBINARY}
-    <if test="_parameter != null" >
-      <include refid="Update_By_Example_Where_Clause" />
-    </if>
-  </update>
-  <update id="updateByExample" parameterType="map" >
-    update word
-    set id = #{record.id,jdbcType=BIGINT},
-      word_name = #{record.wordName,jdbcType=VARCHAR},
-      ph_am = #{record.phAm,jdbcType=VARCHAR},
-      exchange = #{record.exchange,jdbcType=VARCHAR},
-      parts = #{record.parts,jdbcType=VARCHAR}
-    <if test="_parameter != null" >
-      <include refid="Update_By_Example_Where_Clause" />
-    </if>
-  </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.ikoko.top.word.entity.Word" >
-    update word
-    <set >
-      <if test="wordName != null" >
-        word_name = #{wordName,jdbcType=VARCHAR},
-      </if>
-      <if test="phAm != null" >
-        ph_am = #{phAm,jdbcType=VARCHAR},
-      </if>
-      <if test="exchange != null" >
-        exchange = #{exchange,jdbcType=VARCHAR},
-      </if>
-      <if test="parts != null" >
-        parts = #{parts,jdbcType=VARCHAR},
-      </if>
-      <if test="phAmMp3 != null" >
-        ph_am_mp3 = #{phAmMp3,jdbcType=LONGVARBINARY},
-      </if>
-    </set>
-    where id = #{id,jdbcType=BIGINT}
-  </update>
   <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.ikoko.top.word.entity.Word" >
     update word
     set word_name = #{wordName,jdbcType=VARCHAR},

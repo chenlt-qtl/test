@@ -19,19 +19,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.http.client.ClientProtocolException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.ikoko.top.word.dto.SentenceList;
 import com.ikoko.top.word.entity.Sentence;
 import com.ikoko.top.word.service.ArticleService;
 import com.ikoko.top.word.service.SentenceService;
 import com.ikoko.top.word.util.RequestUtil;
+import com.ikoko.top.common.BaseController;
 
 /**
  * 描述：
@@ -39,7 +43,7 @@ import com.ikoko.top.word.util.RequestUtil;
  * @author chenlt
  */
 @Controller
-@RequestMapping("/sentence")
+@RequestMapping("${adminPath}/sentence")
 public class SentenceController extends BaseController{
 	@Autowired
     private ArticleService articleService;
@@ -47,25 +51,15 @@ public class SentenceController extends BaseController{
 	@Autowired
     private SentenceService sentenceService;
 	
-    @RequestMapping("/save")
-    public void enterChart(SentenceList sentenceList,String title,@RequestParam("mp3") MultipartFile[] files) throws ClientProtocolException, IOException {
-        MultipartFile myfile = null;
-        if(files.length>0) {
-            myfile = files[0];
-            if(myfile.getSize()>102400000){
-                Map map = new HashMap();
-                map.put("status", "fail");
-                map.put("msg", "文件不能大于100M");
-                writeResponse(map);
-                return;
-            }
-        }
-    	articleService.saveNewWord(sentenceList,title,myfile);
-    	writeSuccess();
+    @RequestMapping(value = "/save")
+    public String save(SentenceList sentenceList,String title,@RequestParam("mp3") MultipartFile file, HttpServletResponse response, RedirectAttributes redirectAttributes) throws ClientProtocolException, IOException {
+    	articleService.saveNewWord(sentenceList,title,file);
+        addMessage(redirectAttributes, "保存成功");
+        return "redirect:" + adminPath + "/article/articleList";
     }
     
-    @RequestMapping("/getContent")
-    public void getContent() throws IOException{
+    @RequestMapping(value = "/getContent")
+    public void getContent(HttpServletResponse response, HttpServletRequest request) throws IOException{
         Map map = RequestUtil.getParameterMap(request);
         List<Sentence> list = sentenceService.getSentenceByArticle(Long.parseLong((String)map.get("id")));
         String content = "";
@@ -74,6 +68,6 @@ public class SentenceController extends BaseController{
         }
         map.clear();
         map.put("content", content);
-        writeResponse(map);
+        renderString(response, map);
     }
 }

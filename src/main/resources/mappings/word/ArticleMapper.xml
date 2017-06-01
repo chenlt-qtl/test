@@ -41,4 +41,20 @@
             <include refid="articleColumns"/>
         FROM w_article WHERE status='0' and id = #{id}
     </select>
+
+	<insert id="insert" parameterType="com.ikoko.top.word.entity.Article" useGeneratedKeys="true" keyProperty="id">
+		insert into w_article (
+		<include refid="articleColumns" />
+		)
+		values (#{id,jdbcType=BIGINT}, #{title,jdbcType=VARCHAR},
+		#{mp3,jdbcType=LONGVARBINARY},#{status,jdbcType=TINYINT},#{wordNum,jdbcType=INTEGER})
+	</insert>
+	
+	<update id="update">
+        update w_article
+            set title = #{title,jdbcType=VARCHAR},
+            status = #{status,jdbcType=BIT},
+            word_num = #{wordNum,jdbcType=INTEGER}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
 </mapper>

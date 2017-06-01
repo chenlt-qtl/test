@@ -120,9 +120,7 @@ public class ArticleService  extends CrudService<ArticleMapper, Article> {
 			if(sentence.getWordList()!=null){
     			for(Word word:sentence.getWordList()){
     				word.setWordName(word.getWordName().toLowerCase());
-    				WordExample wordExample = new WordExample();
-    				wordExample.createCriteria().andWordNameEqualTo(word.getWordName());
-    				List<Word> wordList = wordMapper.selectByExample(wordExample);
+    				List<Word> wordList = wordMapper.selectByWordName(word.getWordName());
     				if(wordList.size()>0){
     					word.setId(wordList.get(0).getId());
     				}else{
@@ -173,7 +171,7 @@ public class ArticleService  extends CrudService<ArticleMapper, Article> {
     		}
 		}
 		article.setWordNum(wordNum);
-		articleMapper.updateByPrimaryKey(article);
+		articleMapper.update(article);
 	}
 	
 	public List getArticleByPage(Map map){

@@ -20,15 +20,15 @@
                                 <div class="am-btn-toolbar">
                                     <div class="am-btn-group am-btn-group-xs">
                                         <shiro:hasPermission name="sys:user:create">
-                                            <button type="button" class="am-btn am-btn-default am-btn-success"
-                                                    onclick="openModel(false,'${ctx}/article/add')"><span class="am-icon-plus"></span> 新增
+                                            <button type="button" class="am-btn am-btn-default am-btn-success" onclick="add()">
+                                                <span class="am-icon-plus"></span> 增加
                                             </button></shiro:hasPermission>
                                     </div>
                                 </div>
                             </div>
                             
                             <div class="am-u-sm-12 am-u-md-9 am-u-lg-9">
-                                <form id="searchForm" action="${ctx}/article/articleList" method="post">
+                                <form id="searchForm" action="${ctx}/article/listAll" method="post">
                                     <input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
                                     <input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
                                     <div class="am-input-group am-input-group-sm tpl-form-border-form cl-p">
@@ -51,29 +51,17 @@
                                 <table id="contentTable" class="am-table am-table-compact am-table-striped tpl-table-black">
                                     <thead>
                                     <tr>
+                                        <th><input name="checkboxall" type="checkbox" style="margin-top: -17px;" /></th>
                                         <th>文章名</th>
                                         <th>单词数</th>
-                                        <th>操作</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     <c:forEach items="${page.list}" var="article" varStatus="status">
                                         <tr>
+                                            <td><input name="checkbox" type="checkbox" value="${article.id}" /></td>
                                             <td>${article.title}</td>
                                             <td>${article.wordNum}</td>
-                                            <td>
-                                                
-                                                <c:if test="${article.hasMp3==1}">
-                                                    <a href="${ctx}/article/getMp3?id=${article.id}"
-                                                       onclick="return play(this.href,this)" title="发音"><span
-                                                            class="oper oper-play"></span></a>
-                                                </c:if>
-                                                <a href="${ctx}/article/delete?id=${article.id}&pageNo=${page.pageNo}&pageSize=${page.pageSize}"
-                                                       onclick="return confirm('确认要删除该条数据吗？', this.href)" title="删除"><span
-                                                            class="am-text-danger am-icon-trash-o"></span></a>
-                                                <a href="#" onclick="openModel(false,'${ctx}/sentence/getContent?id=${article.id}&title=${article.title}&pageNo=${page.pageNo}&pageSize=${page.pageSize}')" 
-                                                        title="查看明细"><span class="am-text-primary am-icon-search"></span></a>
-                                            </td>
                                         </tr>
                                     </c:forEach>
                                     </tbody>
@@ -110,21 +98,24 @@
     });
 </script>
 <script type="text/javascript">
-    
-    function play(href,a){
-		var span = $(a).children("span");
-		var audio = document.getElementById("audio");
-		if($(span).attr("class")=="oper oper-pause"){
-			audio.pause();
-	        $(span).attr("class","oper oper-play");
-		}else{
-	        audio.src = href;
-	        audio.play();
-	        $(span).attr("class","oper oper-pause");
-		}
-        return false;
-	}
-	
+$(document).ready(function() {
+    //多选按钮的全选和反选
+    $("input[name='checkboxall']").click(function(){
+        $("input[name='checkbox']").prop("checked",$(this).is(":checked"));
+    });
+});
+
+function add(){
+	var ids="";
+    $("input[name='checkbox']:checked").each(function(){
+        ids+=$(this).val()+",";
+    });
+    if(ids!=''){
+    	openModel(false,'${ctx}/article/my/add?ids='+ids+"&pageNo="+$("#pageNo").val()+"&pageSize="+$("#pageSize").val());
+    }else{
+        showMsg('请勾选要增加的文章');
+    }
+}
 </script>
 </body>
 </html>

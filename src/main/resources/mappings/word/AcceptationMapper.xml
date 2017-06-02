@@ -10,12 +10,20 @@
   <sql id="Base_Column_List" >
     id, word_id, pos, acceptation
   </sql>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+  <select id="get" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from w_acceptation
-    where id = #{id,jdbcType=BIGINT}
+    where id = #{id}
   </select>
+  
+  <select id="selectByWordId" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from w_acceptation
+    where word_id = #{wordId,jdbcType=BIGINT}
+  </select>
+  
   <delete id="delete" parameterType="java.lang.Long" >
     delete from w_acceptation
     where id = #{id,jdbcType=BIGINT}

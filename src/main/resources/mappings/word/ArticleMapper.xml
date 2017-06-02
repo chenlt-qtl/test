@@ -9,26 +9,28 @@
         id ,title,mp3,status,word_num
     </sql>
     
-    <sql id="articleJoins">
-        LEFT JOIN w_article_user_rel b ON a.id = b.article_id
-    </sql>
-    
     <select id="count" resultType="int">
-        SELECT count(1) FROM w_article a <include refid="articleJoins"/>
+        SELECT count(1) FROM w_article a
         <where>
-            a.status = '0'
+            a.status = '0' 
             <if test="page.entity.user != null and page.entity.user.id != null and page.entity.user.id != ''">
-	            and b.user_id = #{page.entity.user.id}
+	            and exists (select 1 from w_article_user_rel b where a.id = b.article_id and b.status = '0' and b.user_id = #{page.entity.user.id})
 	        </if>
+	        <if test="page.entity.title != null and page.entity.title != ''">
+                and a.title = #{page.entity.title}
+            </if>
         </where>
     </select>
 
     <select id="findPage" resultType="com.ikoko.top.word.entity.Article">
-        SELECT <include refid="articleColumnsWithOutMp3"/> FROM w_article a <include refid="articleJoins"/>
+        SELECT <include refid="articleColumnsWithOutMp3"/> FROM w_article a 
         <where>
-            a.status = '0'
-            <if test="page.entity.id!=null and page.entity.id!=''">
-                and b.user_id = #{page.entity.id}
+            a.status = '0' 
+            <if test="page.entity.user != null and page.entity.user.id != null and page.entity.user.id != ''">
+                and exists (select 1 from w_article_user_rel b where a.id = b.article_id and b.status = '0' and b.user_id = #{page.entity.user.id})
+            </if>
+            <if test="page.entity.title != null and page.entity.title != ''">
+                and a.title = #{page.entity.title}
             </if>
         </where>
         <if test="page.orderBy!=''">
@@ -57,4 +59,8 @@
             word_num = #{wordNum,jdbcType=INTEGER}
         where id = #{id,jdbcType=BIGINT}
     </update>
+    
+    <delete id="delete">
+        update w_article set status='1' where id=#{id}
+    </delete>
 </mapper>

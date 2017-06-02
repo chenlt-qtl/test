@@ -46,7 +46,6 @@ import com.ikoko.top.word.entity.IcibaSentence;
 import com.ikoko.top.word.entity.Sentence;
 import com.ikoko.top.word.entity.SentenceWordRel;
 import com.ikoko.top.word.entity.Word;
-import com.ikoko.top.word.entity.WordExample;
 import com.ikoko.top.word.util.HttpClientFactory;
 import com.ikoko.top.word.util.ParseIciba;
 
@@ -120,7 +119,9 @@ public class ArticleService  extends CrudService<ArticleMapper, Article> {
 			if(sentence.getWordList()!=null){
     			for(Word word:sentence.getWordList()){
     				word.setWordName(word.getWordName().toLowerCase());
-    				List<Word> wordList = wordMapper.selectByWordName(word.getWordName());
+    				Map map = new HashMap();
+    		        map.put("wordName", word.getWordName());
+    				List<Word> wordList = wordMapper.selectByParam(map);
     				if(wordList.size()>0){
     					word.setId(wordList.get(0).getId());
     				}else{
@@ -135,7 +136,7 @@ public class ArticleService  extends CrudService<ArticleMapper, Article> {
     					int status = response.getStatusLine().getStatusCode();
     					if(status == 200){
     						try {
-    							detailMap = ParseIciba.parse(EntityUtils.toString(response.getEntity(), "UTF-8"),word);
+    							detailMap = ParseIciba.parse(EntityUtils.toString(response.getEntity(),"utf-8"),word);
     						} catch (Exception e) {
     							System.out.println("解析查词结果失败:"+e.getMessage());
     						}

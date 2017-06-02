@@ -87,7 +87,19 @@
 </div>
 <%@ include file="../../include/bottom.jsp"%>
 <script type="text/javascript">
+
 $(document).ready(function() {
+	
+	$("#showForm").on('click','.word', function (params) {
+        $(this).removeClass('word');
+        $(this).addClass('newWord');
+    });
+    
+    $("#showForm").on('click','.newWord', function (params) {
+        $(this).removeClass('newWord');
+        $(this).addClass('word');
+    });
+    
     //消息提醒
     var msg = '${msg}';
     if(msg!=''){
@@ -120,7 +132,7 @@ $(document).ready(function() {
         var patt2=new RegExp("^[.,:;?!]{1}[a-zA-Z]+$");
         var patt3=new RegExp("^[\"\']{1}[a-zA-Z]+[\"\']{1}$");
         var patt4=new RegExp("[a-zA-Z]");
-        $.each(content.split(/[.;?!\r]+/),function(){
+        $.each(content.split(/[.;?!\r()]+/),function(){
             html += '<span class="sentence">';
             html += "<span class='original'>"+this+"</span>"
             $.each(this.split(" "),function(){ 
@@ -166,18 +178,10 @@ $(document).ready(function() {
         })
         $("#showDiv [name='content']").html(html);
         $("#showDiv").show();
-        $(".word").on('click', function (params) {
-            $(this).removeClass('word');
-            $(this).addClass('newWord');
-        });
-        $(".newWord").on('click', function (params) {
-            $(this).removeClass('newWord');
-            $(this).addClass('word');
-        });
         return false;
 	});
 	
-    
+	
     var options = {   
         url: "${ctx}/sentence/save",  
         resetForm: true,   
@@ -207,17 +211,17 @@ $(document).ready(function() {
         var hasNew = false;
         var sentenceIndex = 0;
         $("#showDiv .sentence").each(function(index,element) {
-            $("#showForm").append($("<input name='sentences["+sentenceIndex+"].content' value='"+HTMLEncode($(this).children('.original').html())+"'/>"));
+            $("#showForm").append($("<input type='hidden' name='sentences["+sentenceIndex+"].content' value='"+HTMLEncode($(this).children('.original').html())+"'/>"));
             var wordIndex = 0;
             $(this).children(".newWord").each(function(wordIndex){
-                $("#showForm").append($("<input name='sentences["+sentenceIndex+"].wordList["+wordIndex+"].wordName' value='"+HTMLEncode($(this).html())+"'/>"));
+                $("#showForm").append($("<input type='hidden' name='sentences["+sentenceIndex+"].wordList["+wordIndex+"].wordName' value='"+HTMLEncode($(this).html())+"'/>"));
                 wordIndex++;
             });
             sentenceIndex++;
             hasNew = true;
         });
         if(hasNew){
-            $("#showForm").append($("<input name='title' value='"+$("#showDiv [name='title']").html()+"'/>"));
+            $("#showForm").append($("<input type='hidden' name='title' value='"+$("#showDiv [name='title']").html()+"'/>"));
         }
     });
     

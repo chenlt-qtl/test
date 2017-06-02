@@ -23,7 +23,6 @@ import org.springframework.stereotype.Service;
 
 import com.ikoko.top.word.dao.AcceptationMapper;
 import com.ikoko.top.word.entity.Acceptation;
-import com.ikoko.top.word.entity.AcceptationExample;
 
 /**
  * 描述:
@@ -35,8 +34,6 @@ public class AcceptationService {
     private AcceptationMapper acceptationMapper;
     
     public List<Acceptation> getByWordId(long wordId){
-        AcceptationExample acceptationExample = new AcceptationExample();
-        acceptationExample.createCriteria().andWordIdEqualTo(wordId);
-        return acceptationMapper.selectByExample(acceptationExample);
+        return acceptationMapper.selectByWordId(wordId);
     }
 }

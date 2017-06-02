@@ -36,4 +36,8 @@ public class SentenceService {
         
         return sentenceMapper.selectByArticle(id);
     }
+    
+    public List selectByWord(String wordId){
+        return sentenceMapper.selectByWord(wordId);
+    }
 }

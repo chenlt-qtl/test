@@ -1,6 +1,6 @@
 
 /**
-* @(#)WordService.java 2017年4月12日
+* @(#)IcibaSentenceService.java 2017年6月2日
 *
 * Copyright 2000-2017 by ChinanetCenter Corporation.
 *
@@ -22,34 +22,27 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.ikoko.top.word.dao.WordMapper;
-import com.ikoko.top.word.entity.Word;
+import com.ikoko.top.common.service.CrudService;
+import com.ikoko.top.word.dao.IcibaSentenceMapper;
+import com.ikoko.top.word.entity.IcibaSentence;
 
 /**
  * 描述:
  * @author chenlt
  */
+
 @Service
-public class WordService {
-    
+@Transactional(readOnly = true)
+public class IcibaSentenceService  extends CrudService<IcibaSentenceMapper, IcibaSentence> {
+
     @Autowired
-    private WordMapper wordMapper;
+    private IcibaSentenceMapper icibaSentenceMapper;
     
-    @Autowired
-    private AcceptationService acceptationService;
-    
-    public List getByArticle(String articleId){
-        return wordMapper.selectByArticleId(articleId);
-    }
-    
-    public Word getMp3(String id){
-        return wordMapper.get(id);
-    }
-    
-    public Word getById(String id){
-        Word word = wordMapper.get(id);
-        word.setAcceptations(acceptationService.getByWordId(word.getId()));
-        return word;
+    public List<IcibaSentence> selectByWordId(String wordId){
+        Map map = new HashMap();
+        map.put("wordId", wordId);
+        return icibaSentenceMapper.select(map);
     }
 }

@@ -18,23 +18,35 @@
     ph_am_mp3
   </sql>
   
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap">
+  <select id="get" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     ,
     <include refid="Blob_Column_List" />
     from w_word
-    where word_name = #{word_name}
+    where id = #{id}
   </select>
-  <select id="selectByWordName" resultMap="ResultMapWithBLOBs">
+  <select id="selectByParam" resultMap="ResultMapWithBLOBs">
     select 
     <include refid="Base_Column_List" />
     ,
     <include refid="Blob_Column_List" />
     from w_word
-    where word_name = #{word_name}
+    <where>
+        <if test="wordName!=null and wordName!=''">
+            word_name = #{wordName}
+        </if>
+    </where>
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+  
+  <select id="selectByArticleId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from w_word a where exists (select 1 from w_sentence_word_rel b where a.id = b.word_id and 
+        exists (select 1 from w_sentence c where c.id = b.sentence_id and c.article_id = #{articleId,jdbcType=VARCHAR}))
+  </select>
+  
+  <delete id="delete" parameterType="java.lang.Long" >
     delete from word
     where id = #{id,jdbcType=BIGINT}
   </delete>
@@ -55,7 +67,7 @@
       ph_am_mp3 = #{phAmMp3,jdbcType=LONGVARBINARY}
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.ikoko.top.word.entity.Word" >
+  <update id="update" parameterType="com.ikoko.top.word.entity.Word" >
     update word
     set word_name = #{wordName,jdbcType=VARCHAR},
       ph_am = #{phAm,jdbcType=VARCHAR},

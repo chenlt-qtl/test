@@ -26,12 +26,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.ikoko.top.common.BaseController;
 import com.ikoko.top.common.Page;
 import com.ikoko.top.common.utils.UserUtils;
 import com.ikoko.top.word.entity.Article;
 import com.ikoko.top.word.service.ArticleService;
+import com.ikoko.top.word.service.ArticleUserRelService;
 import com.ikoko.top.word.util.RequestUtil;
 
 /**
@@ -44,6 +46,9 @@ import com.ikoko.top.word.util.RequestUtil;
 public class ArticleController extends BaseController {
 	@Autowired
     private ArticleService articleService;
+	
+	@Autowired
+    private ArticleUserRelService articleUserRelService;
     
     @RequestMapping(value = "/add")
     public String enterAdd(HttpServletRequest request, HttpServletResponse response) {
@@ -52,10 +57,32 @@ public class ArticleController extends BaseController {
     
     @RequestMapping(value = "/articleList")
     public String showArticle(Article article,Model model, Page<Article> page){
-        article.setUser(UserUtils.getLoginUser());
         page.setEntity(article);
         model.addAttribute("page", page.setList(articleService.findPage(page)));
     	return "word/article/listArticle";
+    }
+    
+    @RequestMapping(value = "/my/listOther")
+    public String listOther(Article article,Model model, Page<Article> page){
+        page.setEntity(article);
+        model.addAttribute("page", page.setList(articleService.findPage(page)));
+        return "word/article/listOther";
+    }
+    
+    @RequestMapping(value = "/my/add")
+    public String addMy(String[] ids, int pageNo, int pageSize, RedirectAttributes redirectAttributes) {
+        articleUserRelService.addAll(ids,UserUtils.getLoginUser().getId());
+        addMessage(redirectAttributes, "添加成功");
+        return "redirect:" + adminPath + "/article/my/articleList?pageNo=" + pageNo + "&pageSize=" + pageSize;
+    }
+    
+    
+    @RequestMapping(value = "/my/articleList")
+    public String showMyArticle(Article article,Model model, Page<Article> page){
+        article.setUser(UserUtils.getLoginUser());
+        page.setEntity(article);
+        model.addAttribute("page", page.setList(articleService.findPage(page)));
+        return "word/article/listMyArticle";
     }
     
     @RequestMapping(value = "/getArticlesPage")
@@ -68,12 +95,12 @@ public class ArticleController extends BaseController {
     }
     
     @RequestMapping(value = "/delete")
-    public void delete(HttpServletResponse response, HttpServletRequest request){
-        Object id = request.getParameter("id");
-        if(id != null){
-            articleService.delete(String.valueOf(id));
-            writeSuccess(response);
+    public String delete(Article article,int pageNo,int pageSize, RedirectAttributes redirectAttributes) {
+        if(article != null){
+            articleService.delete(article);
+            addMessage(redirectAttributes, "删除成功");
         }
+        return "redirect:" + adminPath + "/article/articleList?pageNo="+pageNo+"&pageSize="+pageSize;
     }
     
     @RequestMapping(value = "/getMp3")

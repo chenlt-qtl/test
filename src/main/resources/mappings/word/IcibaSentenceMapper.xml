@@ -10,11 +10,22 @@
   <sql id="Base_Column_List" >
     id, word_id, orig, trans
   </sql>
-  <select id="get" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+  <select id="get" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from w_iciba_sentence
-    where id = #{id,jdbcType=BIGINT}
+    where id = #{id}
+  </select>
+  
+  <select id="select" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from w_iciba_sentence
+    <where>
+        <if test="wordId!=null and wordId != ''">
+            and word_id =#{wordId}
+        </if>
+    </where>
   </select>
   <delete id="delete" parameterType="java.lang.Long" >
     delete from w_iciba_sentence

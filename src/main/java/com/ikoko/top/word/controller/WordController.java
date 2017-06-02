@@ -16,17 +16,18 @@
 
 package com.ikoko.top.word.controller;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.ModelAndView;
 
+import com.ikoko.top.common.BaseController;
 import com.ikoko.top.word.entity.Word;
-import com.ikoko.top.word.service.AcceptationService;
+import com.ikoko.top.word.service.IcibaSentenceService;
+import com.ikoko.top.word.service.SentenceService;
 import com.ikoko.top.word.service.WordService;
 
 /**
@@ -34,41 +35,38 @@ import com.ikoko.top.word.service.WordService;
  * @author chenlt
  */
 @Controller
-@RequestMapping("/word")
+@RequestMapping("${adminPath}/word")
 public class WordController extends BaseController{
 
     @Autowired
     private WordService wordService;    
     
-    @RequestMapping("/getWordByArticle")
-    public void getWordByArticle() {
-        Object id = request.getParameter("articleId");
-        if(id != null){
-            List list = wordService.getByArticle(String.valueOf(id));
-            Map map = new HashMap<>();
-            map.put("rows", list);
-            map.put("results", list.size());
-            writeResponse(map);
-        }
-    }
+    @Autowired
+    private IcibaSentenceService icibaSentenceService;    
     
-    @RequestMapping("/getMp3")
-    public void getMp3() {
+    @Autowired
+    private SentenceService sentenceService;    
+    
+    @RequestMapping(value="/getMp3")
+    public void getMp3(HttpServletResponse response, HttpServletRequest request) {
         Object id = request.getParameter("id");
         if(id != null){
             Word word = wordService.getMp3(String.valueOf(id));
-            writeMp3(word.getPhAmMp3());
+            writeMp3(response, word.getPhAmMp3());
         }
     }
     
-    @RequestMapping("/detail")
-    public ModelAndView enterDetail() {
+    @RequestMapping(value="/detail")
+    public String enterDetail(HttpServletRequest request,Model model) {
         Object id = request.getParameter("id");
         Word word = null;
         if(id != null){
             word = wordService.getById(String.valueOf(id));
         }
-        return new ModelAndView("wordDetail","word",word);
+        model.addAttribute("word", word);
+        model.addAttribute("icibaSentence", icibaSentenceService.selectByWordId(String.valueOf(word.getId())));
+        model.addAttribute("sentences", sentenceService.selectByWord(String.valueOf(word.getId())));
+        return "word/wordDetail";
     }
 
 }

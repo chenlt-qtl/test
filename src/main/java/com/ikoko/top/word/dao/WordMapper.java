@@ -1,13 +1,15 @@
 package com.ikoko.top.word.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import com.ikoko.top.common.ICrudDao;
 import com.ikoko.top.word.entity.Word;
 
 public interface WordMapper extends ICrudDao<Word> {
-    Word selectByPrimaryKey(Long id);
     int updateByPrimaryKeyWithBLOBs(Word record);
     
-    List<Word> selectByWordName(String wordName);
+    List<Word> selectByParam(Map map);
+    
+    List<Word> selectByArticleId(String articleId);
 }

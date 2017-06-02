@@ -62,7 +62,7 @@ $(document).ready(function(){
                                         }
                                     });
                                 proposalList.append(element);
-                            }else if(isNaN(word) && items[i].type=='string'){
+                            }else if(items[i].type=='string'){
                                 var element = $('<li></li>')
                                     .html('<input type="hidden" name="'+items[i].field+'" value="'+word+'" />'+items[i].desc+"="+word)
                                     .click(function(){

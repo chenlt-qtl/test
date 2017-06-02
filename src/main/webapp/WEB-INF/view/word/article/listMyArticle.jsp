@@ -21,7 +21,7 @@
                                     <div class="am-btn-group am-btn-group-xs">
                                         <shiro:hasPermission name="sys:user:create">
                                             <button type="button" class="am-btn am-btn-default am-btn-success"
-                                                    onclick="openModel(false,'${ctx}/article/add')"><span class="am-icon-plus"></span> 新增
+                                                    onclick="openModel(false,'${ctx}/article/my/listAll')"><span class="am-icon-plus"></span> 增加
                                             </button></shiro:hasPermission>
                                     </div>
                                 </div>

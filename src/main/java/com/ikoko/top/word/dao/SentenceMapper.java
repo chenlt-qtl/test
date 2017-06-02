@@ -11,4 +11,5 @@ public interface SentenceMapper extends ICrudDao<Sentence> {
     Sentence selectByPrimaryKey(Long id);
     
     List<Sentence> selectByArticle(Long articleId);
+    List<Sentence> selectByWord(String wordId);
 }

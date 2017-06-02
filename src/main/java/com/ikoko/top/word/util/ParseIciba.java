@@ -107,8 +107,8 @@ public class ParseIciba {
 			Element orig = (Element)sent.element("orig");
 			Element trans = (Element)sent.element("trans");
 			IcibaSentence is = new IcibaSentence();
-			is.setOrig(URLEncoder.encode(orig.getText(), "utf-8"));
-			is.setTrans(URLEncoder.encode(trans.getText(), "utf-8"));
+			is.setOrig(orig.getText().replaceAll("\n", ""));
+			is.setTrans(trans.getText().replaceAll("\n", ""));
 			isList.add(is);
 			
 		}
@@ -122,7 +122,7 @@ public class ParseIciba {
 		File file = new File(ParseIciba.class.getClassLoader().getResource("").getPath() + "a.xml");
 		Word word = new Word();
 		word.setWordName("identify");
-		Map map = ParseIciba.parse(FileUtils.readFileToString(file, "UTF-8"),word);
+		Map map = ParseIciba.parse(FileUtils.readFileToString(file, "utf-8"),word);
 		List list1= (List)map.get("acceptations");
 		List list2= (List)map.get("icibaSentence");
 		System.out.println(map.get("acceptations").toString());

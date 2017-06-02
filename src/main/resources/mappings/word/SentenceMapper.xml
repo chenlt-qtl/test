@@ -9,21 +9,27 @@
   <sql id="Base_Column_List" >
     id, article_id, content
   </sql>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+  <select id="get" resultMap="BaseResultMap" >
     select 
     <include refid="Base_Column_List" />
-    from sentence
-    where id = #{id,jdbcType=BIGINT}
+    from w_sentence
+    where id = #{id}
   </select>
   
   <select id="selectByArticle" resultType="com.ikoko.top.word.entity.Sentence" parameterType="java.lang.Long" >
     select 
     <include refid="Base_Column_List" />
-    from sentence
+    from w_sentence
     where article_id = #{id,jdbcType=BIGINT}
   </select>
+  <select id="selectByWord" resultType="com.ikoko.top.word.entity.Sentence">
+    select 
+    <include refid="Base_Column_List" />
+    from w_sentence a
+    where exists (select 1 from w_sentence_word_rel b where a.id =b.sentence_id and b.word_id = #{wordId})
+  </select>
   <delete id="delete" parameterType="java.lang.Long" >
-    delete from sentence
+    delete from w_sentence
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.ikoko.top.word.entity.Sentence" useGeneratedKeys="true" keyProperty="id">
@@ -31,7 +37,7 @@
     values (#{id,jdbcType=BIGINT}, #{articleId,jdbcType=BIGINT}, #{content,jdbcType=VARCHAR})
   </insert>
   <update id="update" parameterType="com.ikoko.top.word.entity.Sentence" >
-    update sentence
+    update w_sentence
     set article_id = #{articleId,jdbcType=BIGINT},
       content = #{content,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}

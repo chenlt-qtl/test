@@ -43,9 +43,12 @@
 }
 
 .wordName{
-	margin:20px;
 	padding-top:40px;
     font-size: 20px;
+}
+
+.wordBody{
+    margin-left:20px;
 }
 
 .oper {

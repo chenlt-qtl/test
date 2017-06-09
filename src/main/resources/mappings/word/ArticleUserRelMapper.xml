@@ -24,6 +24,13 @@
     delete from w_article_user_rel
     where id = #{id}
   </delete>
+  
+  <update id="deleteByArticle">
+    update w_article_user_rel
+    set status = 1
+    where article_id = #{articleId} and user_id = #{userId}
+  </update>
+  
   <insert id="insert" parameterType="com.ikoko.top.word.entity.ArticleUserRel" useGeneratedKeys="true" keyProperty="id">
     insert into w_article_user_rel (id,user_id, article_id, create_by, 
       create_date, update_by, update_date, 

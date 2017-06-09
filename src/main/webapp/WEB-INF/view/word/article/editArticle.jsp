@@ -132,7 +132,7 @@ $(document).ready(function() {
         var patt2=new RegExp("^[.,:;?!]{1}[a-zA-Z]+$");
         var patt3=new RegExp("^[\"\']{1}[a-zA-Z]+[\"\']{1}$");
         var patt4=new RegExp("[a-zA-Z]");
-        $.each(content.split(/[.;?!\r()]+/),function(){
+        $.each(content.split(/[.;?!\r]+/),function(){
             html += '<span class="sentence">';
             html += "<span class='original'>"+this+"</span>"
             $.each(this.split(" "),function(){ 
@@ -174,7 +174,7 @@ $(document).ready(function() {
                 html += " ";
             })
             
-            html += '</span>';
+            html += '</span><br/>';
         })
         $("#showDiv [name='content']").html(html);
         $("#showDiv").show();
@@ -187,7 +187,6 @@ $(document).ready(function() {
         resetForm: true,   
         dataType: 'json',
         success:function(data){
-        	alert(1);
             Mask.unmaskElement('body'); 
             var status = data["status"];
             if(status=="success"){

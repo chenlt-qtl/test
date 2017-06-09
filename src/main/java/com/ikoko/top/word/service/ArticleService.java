@@ -32,6 +32,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ikoko.top.common.Page;
 import com.ikoko.top.common.service.CrudService;
 import com.ikoko.top.word.dao.AcceptationMapper;
 import com.ikoko.top.word.dao.ArticleMapper;
@@ -175,8 +176,9 @@ public class ArticleService  extends CrudService<ArticleMapper, Article> {
 		articleMapper.update(article);
 	}
 	
-	public List getArticleByPage(Map map){
-		return articleMapper.selectByPage(map);
-	}
+	 public List<Article> findOtherPage(Page<Article> page) {
+	        page.setTotal(dao.countOther(page));
+	        return dao.findOtherPage(page);
+	    }
 	
 }

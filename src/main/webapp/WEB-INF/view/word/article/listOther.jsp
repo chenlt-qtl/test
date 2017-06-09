@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/view/include/taglib.jsp" %>
 <html>
 <head>
-	<title>文章管理</title>
+	<title>增加文章</title>
 	<%@ include file="../../include/head.jsp" %>
 </head>
 <body>
@@ -13,7 +13,7 @@
 	                <div class="am-u-sm-12 am-u-md-12 am-u-lg-9">
                     <div class="widget am-cf">
                         <div class="widget-head am-cf">
-                            <div class="widget-title am-fl">文章列表</div>
+                            <div class="widget-title am-fl">增加文章</div>
                         </div>
                         <div class="widget-body am-fr">
                             <div class="am-u-sm-12 am-u-md-3 am-u-lg-3">
@@ -23,6 +23,7 @@
                                             <button type="button" class="am-btn am-btn-default am-btn-success" onclick="add()">
                                                 <span class="am-icon-plus"></span> 增加
                                             </button></shiro:hasPermission>
+                                        <button type="button" style="margin-left:10px;" class="am-btn am-btn-danger" onclick="closeModel(false)">关闭</button>
                                     </div>
                                 </div>
                             </div>

@@ -17,10 +17,12 @@
 package com.ikoko.top.word.service;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ikoko.top.common.service.CrudService;
+import com.ikoko.top.word.dao.ArticleMapper;
 import com.ikoko.top.word.dao.ArticleUserRelMapper;
 import com.ikoko.top.word.entity.ArticleUserRel;
 
@@ -33,6 +35,9 @@ import com.ikoko.top.word.entity.ArticleUserRel;
 @Transactional(readOnly = true)
 public class ArticleUserRelService  extends CrudService<ArticleUserRelMapper, ArticleUserRel> {
 
+    @Autowired
+    private ArticleUserRelMapper articleUserRelMapper;
+    
     public void addAll(String[] ids,String userId){
         for(String id:ids){
             if(StringUtils.isNotBlank(id)){
@@ -40,8 +45,12 @@ public class ArticleUserRelService  extends CrudService<ArticleUserRelMapper, Ar
                 entity.setArticleId(Long.parseLong(id));
                 entity.setUserId(Long.parseLong(userId));
                 entity.setStatus("0");
-                dao.insert(entity);
+                save(entity);
             }
         }
+    }
+    
+    public void deleteByArticle(String articleId,String userId){
+        articleUserRelMapper.deleteByArticle(articleId,userId);
     }
 }

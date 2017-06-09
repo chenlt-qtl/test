@@ -65,8 +65,7 @@
                                                 
                                                 <c:if test="${article.hasMp3==1}">
                                                     <a href="${ctx}/article/getMp3?id=${article.id}"
-                                                       onclick="return play(this.href,this)" title="发音"><span
-                                                            class="oper oper-play"></span></a>
+                                                       onclick="return play(this.href,this)" title="发音"><i class="fa fa-volume-up" aria-hidden="true"></i></a>
                                                 </c:if>
                                                 <a href="${ctx}/article/delete?id=${article.id}&pageNo=${page.pageNo}&pageSize=${page.pageSize}"
                                                        onclick="return confirm('确认要删除该条数据吗？', this.href)" title="删除"><span

@@ -22,12 +22,47 @@
         </where>
     </select>
 
+    <select id="selectByIdWithoutMp3" resultType="com.ikoko.top.word.entity.Article">
+        SELECT <include refid="articleColumnsWithOutMp3"/> FROM w_article a 
+        <where>
+            status = '0' and id = #{id}
+        </where>
+    </select>
     <select id="findPage" resultType="com.ikoko.top.word.entity.Article">
         SELECT <include refid="articleColumnsWithOutMp3"/> FROM w_article a 
         <where>
             a.status = '0' 
             <if test="page.entity.user != null and page.entity.user.id != null and page.entity.user.id != ''">
                 and exists (select 1 from w_article_user_rel b where a.id = b.article_id and b.status = '0' and b.user_id = #{page.entity.user.id})
+            </if>
+            <if test="page.entity.title != null and page.entity.title != ''">
+                and a.title = #{page.entity.title}
+            </if>
+        </where>
+        <if test="page.orderBy!=''">
+             ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+    
+        <select id="countOther" resultType="int">
+        SELECT count(1) FROM w_article a
+        <where>
+            a.status = '0' 
+            <if test="page.entity.user != null and page.entity.user.id != null and page.entity.user.id != ''">
+                and not exists (select 1 from w_article_user_rel b where a.id = b.article_id and b.status = '0' and b.user_id = #{page.entity.user.id})
+            </if>
+            <if test="page.entity.title != null and page.entity.title != ''">
+                and a.title = #{page.entity.title}
+            </if>
+        </where>
+    </select>
+
+    <select id="findOtherPage" resultType="com.ikoko.top.word.entity.Article">
+        SELECT <include refid="articleColumnsWithOutMp3"/> FROM w_article a 
+        <where>
+            a.status = '0' 
+            <if test="page.entity.user != null and page.entity.user.id != null and page.entity.user.id != ''">
+                and not exists (select 1 from w_article_user_rel b where a.id = b.article_id and b.status = '0' and b.user_id = #{page.entity.user.id})
             </if>
             <if test="page.entity.title != null and page.entity.title != ''">
                 and a.title = #{page.entity.title}

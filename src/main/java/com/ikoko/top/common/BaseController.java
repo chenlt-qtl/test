@@ -145,8 +145,7 @@ public abstract class BaseController {
     public String writeMp3(HttpServletResponse response, byte[] mp3) {
         try {
             response.reset();
-            String fullContentType = "audio/mp3";
-            response.setContentType(fullContentType);
+            response.setContentType("audio/mp3");
             response.setHeader("Pragma", "No-cache");
             response.setHeader("Cache-Control", "no-cache");
             response.setDateHeader("Expires", 0);

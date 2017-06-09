@@ -4,16 +4,14 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
-import com.ikoko.top.common.utils.DateUtils;
 import org.apache.shiro.web.servlet.AdviceFilter;
-
-import com.ikoko.top.common.utils.LogUtils;
-import com.ikoko.top.common.utils.UserUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.NamedThreadLocal;
 
-import java.text.SimpleDateFormat;
+import com.ikoko.top.common.utils.DateUtils;
+import com.ikoko.top.common.utils.LogUtils;
+import com.ikoko.top.common.utils.UserUtils;
 
 /**
  * 系统日志拦截器

@@ -13,7 +13,7 @@
 	                <div class="am-u-sm-12 am-u-md-12 am-u-lg-9">
                     <div class="widget am-cf">
                         <div class="widget-head am-cf">
-                            <div class="widget-title am-fl">文章列表</div>
+                            <div class="widget-title am-fl">我的文章</div>
                         </div>
                         <div class="widget-body am-fr">
                             <div class="am-u-sm-12 am-u-md-3 am-u-lg-3">
@@ -21,7 +21,7 @@
                                     <div class="am-btn-group am-btn-group-xs">
                                         <shiro:hasPermission name="sys:user:create">
                                             <button type="button" class="am-btn am-btn-default am-btn-success"
-                                                    onclick="openModel(false,'${ctx}/article/my/listAll')"><span class="am-icon-plus"></span> 增加
+                                                    onclick="openModel(false,'${ctx}/article/my/listOther')"><span class="am-icon-plus"></span> 增加
                                             </button></shiro:hasPermission>
                                     </div>
                                 </div>
@@ -68,11 +68,13 @@
                                                        onclick="return play(this.href,this)" title="发音"><span
                                                             class="oper oper-play"></span></a>
                                                 </c:if>
-                                                <a href="${ctx}/article/delete?id=${article.id}&pageNo=${page.pageNo}&pageSize=${page.pageSize}"
+                                                <a href="${ctx}/articleUserRel/delete?id=${article.id}&pageNo=${page.pageNo}&pageSize=${page.pageSize}"
                                                        onclick="return confirm('确认要删除该条数据吗？', this.href)" title="删除"><span
                                                             class="am-text-danger am-icon-trash-o"></span></a>
                                                 <a href="#" onclick="openModel(false,'${ctx}/sentence/getContent?id=${article.id}&title=${article.title}&pageNo=${page.pageNo}&pageSize=${page.pageSize}')" 
                                                         title="查看明细"><span class="am-text-primary am-icon-search"></span></a>
+                                                <a href="#" onclick="openModel(false,'${ctx}/articleLevel/level?id=${article.id}&pageNo=${page.pageNo}&pageSize=${page.pageSize}')" 
+                                                        title="开始背诵"><span class="am-text-success am-icon-play"></span></a>
                                             </td>
                                         </tr>
                                     </c:forEach>

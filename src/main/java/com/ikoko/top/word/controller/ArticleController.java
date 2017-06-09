@@ -14,11 +14,6 @@
 */
 package com.ikoko.top.word.controller;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -34,7 +29,6 @@ import com.ikoko.top.common.utils.UserUtils;
 import com.ikoko.top.word.entity.Article;
 import com.ikoko.top.word.service.ArticleService;
 import com.ikoko.top.word.service.ArticleUserRelService;
-import com.ikoko.top.word.util.RequestUtil;
 
 /**
  * 描述：
@@ -64,8 +58,9 @@ public class ArticleController extends BaseController {
     
     @RequestMapping(value = "/my/listOther")
     public String listOther(Article article,Model model, Page<Article> page){
+        article.setUser(UserUtils.getLoginUser());
         page.setEntity(article);
-        model.addAttribute("page", page.setList(articleService.findPage(page)));
+        model.addAttribute("page", page.setList(articleService.findOtherPage(page)));
         return "word/article/listOther";
     }
     
@@ -77,21 +72,14 @@ public class ArticleController extends BaseController {
     }
     
     
+    
+    
     @RequestMapping(value = "/my/articleList")
     public String showMyArticle(Article article,Model model, Page<Article> page){
         article.setUser(UserUtils.getLoginUser());
         page.setEntity(article);
         model.addAttribute("page", page.setList(articleService.findPage(page)));
         return "word/article/listMyArticle";
-    }
-    
-    @RequestMapping(value = "/getArticlesPage")
-    public void getArticlesPage(HttpServletResponse response, HttpServletRequest request) throws IOException{
-    	List list = articleService.getArticleByPage(RequestUtil.getParameterMap(request));
-    	Map map = new HashMap<>();
-    	map.put("rows", list);
-        map.put("results", list.size());
-    	renderString(response, map);
     }
     
     @RequestMapping(value = "/delete")
@@ -114,17 +102,4 @@ public class ArticleController extends BaseController {
         }
     }
     
-    @RequestMapping(value = "/enterLevel")
-    public void enterLevel(HttpServletResponse response, HttpServletRequest request) {//进入关卡页面
-        Object id = request.getParameter("id");
-        if(id != null){
-            Article article = articleService.getByIdWithoutMp3(String.valueOf(id));
-            int wordNum = article.getWordNum();
-            int level = wordNum/10+1;
-            Map map = new HashMap<>();
-            map.put("wordNum", wordNum);
-            map.put("level", level);
-            renderString(response, map);
-        }
-    }
 }

@@ -307,11 +307,14 @@
 	  <version>1.0.2</version>
 	</dependency>
 	
+	<!-- https://mvnrepository.com/artifact/org.apache.lucene/lucene-analyzers-common -->
 	<dependency>
 	    <groupId>org.apache.lucene</groupId>
-	    <artifactId>lucene-analyzers</artifactId>
-	    <version>3.4.0</version>
+	    <artifactId>lucene-analyzers-common</artifactId>
+	    <version>6.6.0</version>
 	</dependency>
+	
+	
 	
   </dependencies>
 </project>

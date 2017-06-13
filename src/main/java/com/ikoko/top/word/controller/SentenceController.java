@@ -78,4 +78,11 @@ public class SentenceController extends BaseController{
         model.addAttribute("wordNum", list.size());
         return "word/sentence/content";
     }
+    
+    @RequestMapping(value = "/analy")
+    public String analy(String title, String content,HttpServletRequest request,Model model) throws IOException{
+        List words = sentenceService.analyArticle(content);
+        model.addAttribute("words", words);
+        return "word/article/addWord";
+    }
 }

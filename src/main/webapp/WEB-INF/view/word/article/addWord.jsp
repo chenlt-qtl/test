@@ -38,7 +38,7 @@
 	                                    <thead>
 	                                    <tr>
 	                                        <th>单词</th>
-	                                        <th>频率</th>
+	                                        <th width="10">频率</th>
 	                                        <th>所在句子</th>
 	                                    </tr>
 	                                    </thead>
@@ -48,9 +48,19 @@
 	                                            <td>${word.word}</td>
 	                                            <td>${word.count}</td>
 	                                            <td>
-	                                                <c:forEach items="${word.sentences}" var="sentence" varStatus="status">
-	                                                   ${sentence}</br>
-	                                                </c:forEach>
+	                                                
+	                                                   ${word.sentence[0]}</br>
+	                                                   <c:if test="${word.count>1}">
+	                                                   		<a href="#" onclick="return showDetail(${word.word})" title="查看更多"><i class="am-icon-ellipsis-h" aria-hidden="true"></i></a>
+		                                                   <span name=${word.word}_span style="display:none">
+			                                                   <c:forEach items="${word.sentences}" var="sentence" varStatus="status" >
+			                                                   	 <c:if test="${status.index>=1}">
+			                                                   	 	${sentence}</br>
+			                                                   	 </c:if>
+			                                                   </c:forEach>
+		                                                   </span>
+	                                                   </c:if>
+	                                                
 	                                            </td>
 	                                        </tr>
 	                                    </c:forEach>
@@ -76,6 +86,11 @@
 </div>
 <%@ include file="../../include/bottom.jsp"%>
 <script type="text/javascript">
+
+function showDetail(word){
+	alert(word);
+	return false;
+}
 
 $(document).ready(function() {
 	

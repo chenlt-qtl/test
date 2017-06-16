@@ -26,14 +26,15 @@
                         <div class="widget-body am-fr" id='addDiv'>
                             <form id="addForm" class="am-form tpl-form-border-form" action="${ctx}/sentence/analy" data-am-validator modelAttribute="article" method="post">
                                 <input type="hidden" name="id" value="${article.id}" />
+                                <input type="hidden" name="content" value="${article.content}" />
                                 <div class="am-form-group">
                                     <label class="am-u-sm-3 am-form-label">名称：</label>
                                     <div class="am-u-sm-9">
                                         ${article.title}
                                     </div>
                                 </div>
-                                
-                                <div class="am-u-sm-12">
+                                <div class="am-list-news-bd">
+                                    <div class="am-u-sm-12">
 	                                <table id="contentTable" class="am-table am-table-compact am-table-striped tpl-table-black">
 	                                    <thead>
 	                                    <tr>
@@ -67,7 +68,7 @@
 	                                    </tbody>
 	                                </table>
 	                            </div>
-                                
+                                </div>
                                 <div class="am-form-group">
                                     <div class="am-u-sm-9 am-u-sm-push-3">
                                         <button type="submit" class="am-btn am-btn-primary">提交</button>
@@ -77,7 +78,6 @@
                                 </div>
                             </form>
                         </div>
-                        
                     </div>
                 </div>
             </div>

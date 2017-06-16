@@ -20,11 +20,28 @@
 
     </sql>
 
-    <select id="getConfigInfo" resultType="com.ikoko.top.sys.entity.Config">
+    <select id="get" resultType="com.ikoko.top.sys.entity.Config">
         SELECT
         <include refid="ConfigColumns"/>
         FROM sys_config a
         WHERE a.id = #{id}
+    </select>
+    
+    <select id="getConfigInfo" resultType="com.cnc.sys.entity.Config">
+        SELECT
+        <include refid="ConfigColumns"/>
+        FROM sys_config a
+        <where>
+            <if test="sysName!=null and sysName!=''">
+                and sys_name = #{sysName}
+            </if>
+            <if test="moduleName!=null and moduleName!=''">
+                and module_name = #{moduleName}
+            </if>
+            <if test="configName!=null and configName!=''">
+                and config_name = #{configName}
+            </if>
+        </where>
     </select>
 
     <select id="findList" resultType="com.ikoko.top.sys.entity.Config">

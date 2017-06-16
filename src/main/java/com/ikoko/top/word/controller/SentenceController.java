@@ -32,6 +32,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.ikoko.top.common.BaseController;
 import com.ikoko.top.word.dto.SentenceList;
+import com.ikoko.top.word.entity.Article;
 import com.ikoko.top.word.entity.Sentence;
 import com.ikoko.top.word.service.ArticleService;
 import com.ikoko.top.word.service.SentenceService;
@@ -80,9 +81,10 @@ public class SentenceController extends BaseController{
     }
     
     @RequestMapping(value = "/analy")
-    public String analy(String title, String content,HttpServletRequest request,Model model) throws IOException{
-        List words = sentenceService.analyArticle(content);
+    public String analy(Article article,HttpServletRequest request,Model model) throws IOException{
+        List words = sentenceService.analyArticle(article.getContent());
         model.addAttribute("words", words);
+        model.addAttribute("article", article);
         return "word/article/addWord";
     }
 }

@@ -7,6 +7,7 @@ public class Article  extends DataEntity<Article> {
     
     private byte[] mp3;
     private String title;
+    String content;
     private int hasMp3;
     private Integer wordNum;
     
@@ -40,6 +41,14 @@ public class Article  extends DataEntity<Article> {
 
     public void setWordNum(Integer wordNum) {
         this.wordNum = wordNum;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 
 }

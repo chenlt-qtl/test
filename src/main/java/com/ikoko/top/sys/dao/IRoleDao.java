@@ -16,10 +16,10 @@ import java.util.List;
 public interface IRoleDao extends ICrudDao<Role> {
 
     /**
-     * 获取权限资源ID
-     * @param roleIds
+     * 根据用户ID获取角色信息
+     * @param userId
      * @return
      */
-    public List<Role> getRoles(@Param("roleIds") String[] roleIds);
+     public List<Role> getRolesByUser(@Param("userId") String userId);
 
 }

@@ -2,6 +2,19 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ikoko.top.sys.dao.IRoleDao">
 
+    <sql id="roleBaseColumns">
+        a.id,
+        a.role,
+        a.name,
+        a.organization_id as "organizationId",
+        a.resource_ids as "resourceIdsStr",
+        a.available,
+        a.data_scope as "dataScope",
+        a.remarks,
+        a.create_date as "createDate",
+        a.update_date as "updateDate",
+        a.status as "status"
+    </sql>
 	<sql id="roleColumns">
     	a.id,
     	a.role,
@@ -63,13 +76,11 @@
 	</select>
 
 	<!-- 获取权限资源ID -->
-	<select id="getRoles" resultType="com.ikoko.top.sys.entity.Role">
-		select id,resource_ids as "resourceIdsStr" from sys_role where status='0'and available='1' and id in(
-		<foreach collection="roleIds" item="item" separator=",">
-			#{item}
-		</foreach>
-		)
-	</select>
+    <select id="getRolesByUser" resultType="com.ikoko.top.sys.entity.Role">
+        select <include refid="roleBaseColumns"/> from sys_role a where status='0'and available='1' and id in(
+            select role_id from sys_role_user where status = 0 and user_id=#{userId}
+        )
+    </select>
 	
 	<insert id="insert">
 		insert into sys_role(role,name,organization_id,resource_ids,data_scope,available,create_by,create_date,remarks)

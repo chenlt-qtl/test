@@ -28,6 +28,9 @@ public class UserService extends CrudService<IUserDao, User> {
 
 	@Autowired
 	private RoleService roleService;
+	
+	@Autowired
+    private RoleUserService roleUserService;
 
 	/**
 	 * 修改密码
@@ -73,23 +76,7 @@ public class UserService extends CrudService<IUserDao, User> {
 		if (user == null) {
 			return Collections.emptySet();
 		}
-		return roleService.findRoles(user.getRoleIds().toArray(new String[0]));
-	}
-	/**
-	 * 获取指定用户的角色对象集合
-	 * @param userId 用户名
-	 * @return
-	 */
-	public List<Role> findRolesOfUser(String userId) {
-		User user = get(userId);
-		if (user == null) {
-			return Collections.emptyList();
-		}
-		List<Role> roles = new ArrayList<Role>();
-		for (String roleId: user.getRoleIds()) {
-			roles.add(roleService.get(roleId));
-		}
-		return roles;
+		return roleService.findRoles(user.getId());
 	}
 
 	/**
@@ -102,8 +89,7 @@ public class UserService extends CrudService<IUserDao, User> {
 		if (user == null) {
 			return Collections.emptySet();
 		}
-		return roleService.findPermissions(user.getRoleIds().toArray(
-				new String[0]));
+		return roleService.findPermissions(user.getId());
 	}
 
 	/**
@@ -136,6 +122,11 @@ public class UserService extends CrudService<IUserDao, User> {
 	 */
 	public List<Map> getUsers(String[] users){
 		return dao.getUsers(users);
+	}
+	
+	public void saveUserAndRole(User user){
+	    save(user);
+	    roleUserService.saveRoleUser(user);
 	}
 
 }

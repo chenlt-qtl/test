@@ -13,7 +13,7 @@ import java.io.File;
 public class JUploadUtils {
 
     /**
-     * 文件保存 默认保存在 upload下面
+     * 文件保存 默认保存在工程同级目录下面
      * @param file
      * @param request
      * @return
@@ -21,8 +21,7 @@ public class JUploadUtils {
      */
     public static File save(MultipartFile file,HttpServletRequest request) throws Exception{
         // 获取本地存储路径
-        String path = request.getSession().getServletContext()
-                .getRealPath(JConfig.getConfig(JConfig.FILEUPLOAD));
+        String path = getUploadPath(request);
         String fileName = file.getOriginalFilename();
         // 取得后缀
         String suffixString = fileName
@@ -52,8 +51,7 @@ public class JUploadUtils {
      */
     public static File save(String fileType,MultipartFile file,HttpServletRequest request) throws Exception{
         // 获取本地存储路径
-        String path = request.getSession().getServletContext()
-                .getRealPath(JConfig.getConfig(JConfig.FILEUPLOAD))+File.separator+fileType;
+        String path = getUploadPath(request)+File.separator+fileType;
         String fileName = file.getOriginalFilename();
         // 取得后缀
         String suffixString = fileName
@@ -81,6 +79,17 @@ public class JUploadUtils {
     public static String getSuffix(String fileName){
         // 取得后缀
        return fileName.substring(fileName.lastIndexOf(".") + 1);
+    }
+    
+    /**
+     * 获取文件存放位置
+     * @param request
+     * @return
+     */
+    public static String getUploadPath(HttpServletRequest request){
+        String path = request.getSession().getServletContext().getRealPath("/");
+        path = path.substring(0,path.substring(0,path.length()-1).lastIndexOf(File.separator)+1);
+        return path+JConfig.getConfig(JConfig.FILEUPLOAD);
     }
 
 }

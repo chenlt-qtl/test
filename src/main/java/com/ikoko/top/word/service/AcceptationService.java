@@ -33,7 +33,7 @@ public class AcceptationService {
     @Autowired
     private AcceptationMapper acceptationMapper;
     
-    public List<Acceptation> getByWordId(long wordId){
+    public List<Acceptation> getByWordId(String wordId){
         return acceptationMapper.selectByWordId(wordId);
     }
 }

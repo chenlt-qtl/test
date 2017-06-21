@@ -10,7 +10,6 @@
     	a.password,
     	a.salt,
 		a.name,
-		a.role_ids as "roleIdsStr",
 		a.email,
 		a.phone,
 		a.mobile,
@@ -107,12 +106,12 @@
     </select>
 
 	<insert id="insert">
-		insert into sys_user(no,organization_id, username, password, salt,name,role_ids,email,phone,mobile,photo,locked,is_dept,create_by,create_date,update_by,update_date,remarks)
-	    values(#{no},#{organizationId},#{username},#{password},#{salt},#{name},#{roleIdsStr},#{email},#{phone},#{mobile},#{photo},#{locked},#{isDept},#{createBy},#{createDate},#{updateBy},#{updateDate},#{remarks})
+		insert into sys_user(no,organization_id, username, password, salt,name,email,phone,mobile,photo,locked,is_dept,create_by,create_date,update_by,update_date,remarks)
+	    values(#{no},#{organizationId},#{username},#{password},#{salt},#{name},#{email},#{phone},#{mobile},#{photo},#{locked},#{isDept},#{createBy},#{createDate},#{updateBy},#{updateDate},#{remarks})
 	</insert>
 	
 	<update id="update">
-		update sys_user set no=#{no},organization_id=#{organizationId},username=#{username},password=#{password},salt=#{salt},role_ids=#{roleIdsStr},locked=#{locked},is_dept=#{isDept}
+		update sys_user set no=#{no},organization_id=#{organizationId},username=#{username},password=#{password},salt=#{salt},locked=#{locked},is_dept=#{isDept}
 		,name=#{name},email=#{email},phone=#{phone},mobile=#{mobile},photo=#{photo},update_by=#{updateBy},update_date=#{updateDate},remarks=#{remarks} where id=#{id}
 	</update>
 	

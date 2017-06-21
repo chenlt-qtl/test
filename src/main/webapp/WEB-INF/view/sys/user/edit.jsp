@@ -76,7 +76,7 @@
 								<div class="am-form-group">
 									<label class="am-u-sm-3 am-form-label">角色列表：</label>
 									<div class="am-u-sm-9">
-										<select name="roleIds" data="<c:forEach items="${user.roleIds}" var="item">${item},</c:forEach>" multiple>
+										<select name="rolesStr" data="${user.rolesStr}" multiple>
 											<c:forEach items="${roleList}" var="m">
 												<option value="${m.id}">${m.name}</option>
 											</c:forEach>

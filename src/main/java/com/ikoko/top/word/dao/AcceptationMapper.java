@@ -7,5 +7,5 @@ import com.ikoko.top.word.entity.Acceptation;
 
 public interface AcceptationMapper extends ICrudDao<Acceptation> {
     int deleteByPrimaryKey(Long id);
-    List<Acceptation> selectByWordId(Long wordId);
+    List<Acceptation> selectByWordId(String wordId);
 }

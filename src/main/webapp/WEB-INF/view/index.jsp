@@ -105,7 +105,7 @@
         <div class="tpl-sidebar-user-panel">
             <div class="tpl-user-panel-slide-toggleable">
                 <div class="tpl-user-panel-profile-picture">
-                    <img src="${pageContext.request.contextPath}/${loginUser.photo}<c:if test="${empty loginUser.photo}">static/assets/img/user06.png</c:if>" alt="用户头像">
+                    <img src="/photo/${loginUser.photo}<c:if test="${empty loginUser.photo}">user06.png</c:if>" alt="用户头像">
                 </div>
                     <span class="user-panel-logged-in-text">
               <i class="am-icon-circle-o am-text-success tpl-user-panel-status-icon"></i>

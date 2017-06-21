@@ -1,11 +1,5 @@
 package com.ikoko.top.sys.entity;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
-
 /**
  * 用户表
  * 
@@ -21,8 +15,7 @@ public class User extends DataEntity<User> {
 	private String username; // 用户名
 	private String password; // 密码
 	private String salt; // 加密密码的盐
-	private List<String> roleIds; // 拥有的角色列表
-	private String roleIdsStr;
+	private String rolesStr;
 	private Boolean locked = Boolean.FALSE;//是否锁定
 	private Boolean isDept = Boolean.FALSE;//是否部门管理员
 	private String name;// 姓名或昵称
@@ -87,42 +80,6 @@ public class User extends DataEntity<User> {
 
 	public String getCredentialsSalt() {
 		return username + salt;
-	}
-
-	public List<String> getRoleIds() {
-		if (roleIds == null) {
-			roleIds = new ArrayList<String>();
-		}
-		return roleIds;
-	}
-
-	public void setRoleIds(List<String> roleIds) {
-		this.roleIds = roleIds;
-	}
-
-	public String getRoleIdsStr() {
-		if (CollectionUtils.isEmpty(roleIds)) {
-			return "";
-		}
-		StringBuilder s = new StringBuilder();
-		for (String roleId : roleIds) {
-			s.append(roleId);
-			s.append(",");
-		}
-		return s.toString();
-	}
-
-	public void setRoleIdsStr(String roleIdsStr) {
-		if (StringUtils.isEmpty(roleIdsStr)) {
-			return;
-		}
-		String[] roleIdStrs = roleIdsStr.split(",");
-		for (String roleIdStr : roleIdStrs) {
-			if (StringUtils.isEmpty(roleIdStr)) {
-				continue;
-			}
-			getRoleIds().add(roleIdStr);
-		}
 	}
 
 	public Boolean getLocked() {
@@ -196,5 +153,13 @@ public class User extends DataEntity<User> {
 	public static boolean isAdmin(String id){
 		return id != null && "1".equals(id);
 	}
+	
+    public String getRolesStr() {
+        return rolesStr;
+    }
+
+    public void setRolesStr(String rolesStr) {
+        this.rolesStr = rolesStr;
+    }
 
 }

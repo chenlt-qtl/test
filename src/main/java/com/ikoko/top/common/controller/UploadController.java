@@ -93,10 +93,8 @@ public class UploadController extends BaseController {
 			HttpServletResponse response, HttpServletRequest request) {
 		ResultVo resultVo = null;
 		try {
-			String fileName = file.getOriginalFilename();
 			File targetFile = JUploadUtils.save(file, request);
-			resultVo = new ResultVo(ResultVo.SUCCESS, "0", "上传成功",
-					JConfig.getConfig(JConfig.FILEUPLOAD) + "/" + targetFile.getName());
+			resultVo = new ResultVo(ResultVo.SUCCESS, "0", "上传成功", targetFile.getName());
 		} catch (Exception e) {
 			e.printStackTrace();
 			resultVo = new ResultVo(ResultVo.FAILURE, "-1", "上传失败", null);

@@ -27,7 +27,7 @@
         WHERE a.id = #{id}
     </select>
     
-    <select id="getConfigInfo" resultType="com.cnc.sys.entity.Config">
+    <select id="getConfigInfo" resultType="com.ikoko.top.sys.entity.Config">
         SELECT
         <include refid="ConfigColumns"/>
         FROM sys_config a

@@ -48,9 +48,9 @@ public class UserRest extends BaseController{
                     user.setUsername(username);
                     user.setPassword(password);
                     user.setOrganizationId("1");
-                    user.setRoleIdsStr("3,");
+                    user.setRolesStr("3,");
                     passwordHelper.encryptPassword(user);
-                    userService.save(user);
+                    userService.saveUserAndRole(user);
                     resultVo = new ResultVo(ResultVo.SUCCESS,"1","注册成功",null);
                 }else{
                     resultVo = new ResultVo(ResultVo.SUCCESS,"2","账号已存在",null);

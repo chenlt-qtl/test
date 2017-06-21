@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ikoko.top.sys.dao.IRoleUserDao">
+    <sql id="baseColumns">
+        id,role_id,user_id,create_by,create_date,update_by,update_date,status
+    </sql>
+    <select id="getByUser" resultType="com.ikoko.top.sys.entity.RoleUser">
+        select <include refid="baseColumns"/> from sys_role_user where status='0'and user_id=#{userId}
+    </select>
+    
+    <insert id="insert">
+        insert into sys_role_user(<include refid="baseColumns"/>)
+        values(#{id},#{roleId},#{userId},#{createBy},#{createDate},#{updateBy},#{updateDate},#{status})
+    </insert>
+    
+    <delete id="delete">
+        update sys_role_user set status='1' where id=#{id}
+    </delete>
+</mapper>

@@ -92,9 +92,9 @@ public class LoginController extends BaseController {
 				user.setUsername(username);
 				user.setPassword(password);
 				user.setOrganizationId("1");
-				user.setRoleIdsStr("3,");
+				user.setRolesStr("3,");
 				passwordHelper.encryptPassword(user);
-				userService.save(user);
+				userService.saveUserAndRole(user);
 				addMessage(model,"注册成功");
 				url = "login";
 			}else{

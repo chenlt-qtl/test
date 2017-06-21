@@ -2,27 +2,22 @@ package com.ikoko.top.word.entity;
 
 import java.util.List;
 
-public class Sentence {
-    private Long id;
+import com.ikoko.top.sys.entity.DataEntity;
 
-    private Long articleId;
+public class Sentence  extends DataEntity<Sentence> {
+
+    private String articleId;
 
     private String content;
     
     private List<Word> wordList;
 
-    public Long getId() {
-        return id;
-    }
-    public void setId(Long id) {
-        this.id = id;
-    }
 
-    public Long getArticleId() {
+    public String getArticleId() {
         return articleId;
     }
 
-    public void setArticleId(Long articleId) {
+    public void setArticleId(String articleId) {
         this.articleId = articleId;
     }
 

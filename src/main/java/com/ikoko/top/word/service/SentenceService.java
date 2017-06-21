@@ -30,10 +30,11 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.StopFilter;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ikoko.top.common.service.CrudService;
 import com.ikoko.top.word.dao.SentenceMapper;
+import com.ikoko.top.word.entity.Sentence;
 import com.ikoko.top.word.filter.WordFilter;
 
 
@@ -43,22 +44,18 @@ import com.ikoko.top.word.filter.WordFilter;
  * @author chenlt
  */
 @Service
-public class SentenceService {
+public class SentenceService  extends CrudService<SentenceMapper, Sentence> {
     
     static final String[] STOP_WORD_ARR = { "phoebe", "monica", "i", "a", "oh", "carl", "and", "is", "to", "her", "go",
             "not", "out", "can", "your", "here", "get", "we", "know", "but", "on", "of", "no", "my", "me", "that", "it",
             "in", "if", "he", "chandler", "she", "do", "joey","paul","be","an","you","the","like" };
     
-    @Autowired
-    private SentenceMapper sentenceMapper;
-	
     public List getSentenceByArticle(long id){
-        
-        return sentenceMapper.selectByArticle(id);
+        return dao.selectByArticle(id);
     }
     
     public List selectByWord(String wordId){
-        return sentenceMapper.selectByWord(wordId);
+        return dao.selectByWord(wordId);
     }
     
     public List<Map<String,String>> analyArticle(String content) throws IOException{

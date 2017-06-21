@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ikoko.top.common.ICrudDao;
 import com.ikoko.top.common.service.CrudService;
 import com.ikoko.top.sys.dao.IRoleDao;
 import com.ikoko.top.sys.entity.Role;
@@ -25,26 +24,40 @@ public class RoleService extends CrudService<IRoleDao, Role> {
 	@Autowired
 	ResourceService resourceService;
 
-	public Set<String> findRoles(String... roleIds) {
+	public Set<String> findRoles(String userId) {
 		Set<String> roles = new HashSet<String>();
-		for (String roleId : roleIds) {
-			Role role = get(roleId);
-			if (role != null) {
-				roles.add(role.getRole());
-			}
+		List<Role> roleList = dao.getRolesByUser(userId);
+		for (Role role : roleList) {
+			roles.add(role.getRole());
 		}
 		return roles;
 	}
+	
+    public String findRolesStr(String userId) {
+        String rolesStr = "";
+        List<Role> roleList = dao.getRolesByUser(userId);
+        for (Role role : roleList) {
+            if(rolesStr.length()!=0){
+                rolesStr += ",";
+            }
+            rolesStr += role.getId();
+        }
+        return rolesStr;
+    }
 
-	public Set<String> findPermissions(String[] roleIds) {
+	public Set<String> findPermissions(String userId) {
 		Set<String> resourceIds = new HashSet<String>();
-		List<Role> roles = dao.getRoles(roleIds);
+		List<Role> roles = dao.getRolesByUser(userId);
 		for (int i=0;i<roles.size();i++) {
 			Role role = roles.get(i);
 			if (role != null) {
 				resourceIds.addAll(role.getResourceIds());
 			}
 		}
-		return resourceService.findPermissions(resourceIds);
+		if(resourceIds.size()>0){
+		    return resourceService.findPermissions(resourceIds);
+		}else{
+		    return new HashSet<String>();
+		}
 	}
 }

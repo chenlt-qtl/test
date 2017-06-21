@@ -101,7 +101,7 @@ public class UserController extends BaseController {
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
 	public String create(User user, RedirectAttributes redirectAttributes) {
 		passwordHelper.encryptPassword(user);
-		userService.save(user);
+		userService.saveUserAndRole(user);
 		addMessage(redirectAttributes, "保存成功");
 		return "redirect:" + adminPath + "/user/update?id="+user.getId();
 	}
@@ -115,6 +115,7 @@ public class UserController extends BaseController {
 	@RequiresPermissions("sys:user:update")
 	@RequestMapping(value = "/update", method = RequestMethod.GET)
 	public String update(User user, Model model) {
+	    user.setRolesStr(roleService.findRolesStr(user.getId()));//获取角色信息
 		Organization organization = new Organization();
 		organization.setUser(UserUtils.getLoginUser());
         model.addAttribute("organizationList", organizationService.findList(organization));
@@ -137,7 +138,7 @@ public class UserController extends BaseController {
 		//不是部门经理，不能修改，超级管理员可以修改，自己的信息可以修改
 		User loginUser = UserUtils.getLoginUser();
 		if(loginUser.isAdmin() || user.getId().equals(loginUser.getId()) || loginUser.getIsDept()){
-			userService.save(user);
+			userService.saveUserAndRole(user);
 			CacheUtils.remove(user.getUsername());
 			addMessage(redirectAttributes, "保存成功");
 		}else{

@@ -36,13 +36,10 @@ import com.ikoko.top.word.entity.IcibaSentence;
 @Service
 @Transactional(readOnly = true)
 public class IcibaSentenceService  extends CrudService<IcibaSentenceMapper, IcibaSentence> {
-
-    @Autowired
-    private IcibaSentenceMapper icibaSentenceMapper;
     
     public List<IcibaSentence> selectByWordId(String wordId){
         Map map = new HashMap();
         map.put("wordId", wordId);
-        return icibaSentenceMapper.select(map);
+        return dao.select(map);
     }
 }

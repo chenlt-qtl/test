@@ -58,11 +58,9 @@ import com.ikoko.top.word.util.ParseIciba;
 @Service
 @Transactional(readOnly = true)
 public class ArticleService  extends CrudService<ArticleMapper, Article> {
-	@Autowired
-    private ArticleMapper articleMapper;
 	
    public Article getByIdWithoutMp3(String id){
-        return articleMapper.selectByIdWithoutMp3(Long.parseLong(id));
+        return dao.selectByIdWithoutMp3(Long.parseLong(id));
     }
 	
 	@Autowired
@@ -109,13 +107,13 @@ public class ArticleService  extends CrudService<ArticleMapper, Article> {
 		    }
 		}
 		article.setStatus("0");
-		articleMapper.insert(article);
+		dao.insert(article);
 		for(Sentence sentence:sentenceList.getSentences()){
 		    sentence.setContent(sentence.getContent().replaceAll(" "," "));
 		    if(StringUtils.isBlank(sentence.getContent().trim())){
 		        continue;
 		    }
-			sentence.setArticleId(Long.parseLong(article.getId()));
+			sentence.setArticleId(article.getId());
 			sentenceMapper.insert(sentence);
 			if(sentence.getWordList()!=null){
     			for(Word word:sentence.getWordList()){
@@ -173,7 +171,7 @@ public class ArticleService  extends CrudService<ArticleMapper, Article> {
     		}
 		}
 		article.setWordNum(wordNum);
-		articleMapper.update(article);
+		dao.update(article);
 	}
 	
 	 public List<Article> findOtherPage(Page<Article> page) {

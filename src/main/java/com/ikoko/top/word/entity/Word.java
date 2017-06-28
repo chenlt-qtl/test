@@ -12,6 +12,8 @@ public class Word  extends DataEntity<Word> {
     private String parts;
     private byte[] phAmMp3;
     private List<Acceptation> acceptations = new ArrayList<Acceptation>(); 
+    
+    private String sentenceIndexs;
 
     public String getWordName() {
         return wordName;
@@ -53,6 +55,14 @@ public class Word  extends DataEntity<Word> {
 
     public void setAcceptations(List<Acceptation> acceptations) {
         this.acceptations = acceptations;
+    }
+
+    public String getSentenceIndexs() {
+        return sentenceIndexs;
+    }
+
+    public void setSentenceIndexs(String sentenceIndexs) {
+        this.sentenceIndexs = sentenceIndexs;
     }
     
 }

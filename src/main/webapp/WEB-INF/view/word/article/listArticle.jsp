@@ -70,7 +70,7 @@
                                                 <a href="${ctx}/article/delete?id=${article.id}&pageNo=${page.pageNo}&pageSize=${page.pageSize}"
                                                        onclick="return confirm('确认要删除该条数据吗？', this.href)" title="删除"><span
                                                             class="am-text-danger am-icon-trash-o"></span></a>
-                                                <a href="#" onclick="openModel(false,'${ctx}/sentence/getContent?id=${article.id}&title=${article.title}&pageNo=${page.pageNo}&pageSize=${page.pageSize}')" 
+                                                <a href="#" onclick="openModel(false,'${ctx}/article/getContent?id=${article.id}&pageNo=${page.pageNo}&pageSize=${page.pageSize}')" 
                                                         title="查看明细"><span class="am-text-primary am-icon-search"></span></a>
                                             </td>
                                         </tr>

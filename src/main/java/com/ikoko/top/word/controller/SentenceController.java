@@ -31,7 +31,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.ikoko.top.common.BaseController;
-import com.ikoko.top.word.dto.SentenceList;
+import com.ikoko.top.word.dto.SentenceListForm;
+import com.ikoko.top.word.dto.WordListForm;
 import com.ikoko.top.word.entity.Article;
 import com.ikoko.top.word.entity.Sentence;
 import com.ikoko.top.word.service.ArticleService;
@@ -57,33 +58,17 @@ public class SentenceController extends BaseController{
     private SentenceService sentenceService;
 	
     @RequestMapping(value = "/save")
-    public String save(SentenceList sentenceList,String title,@RequestParam("mp3") MultipartFile file, HttpServletResponse response, RedirectAttributes redirectAttributes) throws ClientProtocolException, IOException {
-    	articleService.saveNewWord(sentenceList,title,file);
+    public String save(SentenceListForm sentences,WordListForm words,String content,String title,@RequestParam("mp3") MultipartFile file, HttpServletResponse response, RedirectAttributes redirectAttributes) throws ClientProtocolException, IOException {
+    	articleService.saveNewWord(sentences.getSentences(),words.getWords(),title,content,file);
         addMessage(redirectAttributes, "保存成功");
         return "redirect:" + adminPath + "/article/articleList";
     }
     
-    @RequestMapping(value = "/getContent")
-    public String getContent(HttpServletResponse response, HttpServletRequest request,Model model) throws IOException{
-        Map map = RequestUtil.getParameterMap(request);
-        List<Sentence> list = sentenceService.getSentenceByArticle(Long.parseLong((String)map.get("id")));
-        String content = "";
-        for(Sentence sentence:list){
-            content += sentence.getContent()+". ";
-        }
-        model.addAttribute("articleId", map.get("id")); 
-        model.addAttribute("title", map.get("title"));
-        model.addAttribute("content", content);
-        list = wordService.getByArticle((String)map.get("id"));
-        model.addAttribute("words", list);
-        model.addAttribute("wordNum", list.size());
-        return "word/sentence/content";
-    }
-    
     @RequestMapping(value = "/analy")
     public String analy(Article article,HttpServletRequest request,Model model) throws IOException{
-        List words = sentenceService.analyArticle(article.getContent());
-        model.addAttribute("words", words);
+        Map map = sentenceService.analyArticle(article.getContent());
+        model.addAttribute("words", map.get("words"));
+        model.addAttribute("sentences", map.get("sentences"));
         model.addAttribute("article", article);
         return "word/article/addWord";
     }

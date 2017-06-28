@@ -6,7 +6,7 @@
     </sql>
     
     <sql id="articleColumns">
-        id ,title,mp3,status,word_num
+        id ,title,mp3,status,word_num,content
     </sql>
     
     <select id="count" resultType="int">
@@ -84,14 +84,15 @@
 		<include refid="articleColumns" />
 		)
 		values (#{id,jdbcType=BIGINT}, #{title,jdbcType=VARCHAR},
-		#{mp3,jdbcType=LONGVARBINARY},#{status,jdbcType=TINYINT},#{wordNum,jdbcType=INTEGER})
+		#{mp3,jdbcType=LONGVARBINARY},#{status,jdbcType=TINYINT},#{wordNum,jdbcType=INTEGER}, #{content,jdbcType=VARCHAR})
 	</insert>
 	
 	<update id="update">
         update w_article
             set title = #{title,jdbcType=VARCHAR},
             status = #{status,jdbcType=BIT},
-            word_num = #{wordNum,jdbcType=INTEGER}
+            word_num = #{wordNum,jdbcType=INTEGER},
+            content = #{content,jdbcType=VARCHAR}
         where id = #{id,jdbcType=BIGINT}
     </update>
     

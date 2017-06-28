@@ -17,6 +17,7 @@ package com.ikoko.top.word.service;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -40,7 +41,6 @@ import com.ikoko.top.word.dao.IcibaSentenceMapper;
 import com.ikoko.top.word.dao.SentenceMapper;
 import com.ikoko.top.word.dao.SentenceWordRelMapper;
 import com.ikoko.top.word.dao.WordMapper;
-import com.ikoko.top.word.dto.SentenceList;
 import com.ikoko.top.word.entity.Acceptation;
 import com.ikoko.top.word.entity.Article;
 import com.ikoko.top.word.entity.IcibaSentence;
@@ -80,9 +80,12 @@ public class ArticleService  extends CrudService<ArticleMapper, Article> {
 	
 	private final static String KEY="C772DB1F60B2839AD948507D91E7B04A"; 
 	
-	public void saveNewWord(SentenceList sentenceList,String title,MultipartFile file) throws IOException{
+	public void saveNewWord(List<Sentence> sentenceList,List<Word> wordList,String title,String content,MultipartFile file) throws IOException{
+	    List<String> sentenceIds = new ArrayList<String>();
 		Article article = new Article();
 		article.setTitle(title);
+		content = com.ikoko.top.common.utils.StringUtils.unCleanXSS(content);
+		article.setContent(content);
 		int wordNum = 0;
 		if(file != null){
 		    if (!file.isEmpty()) {    
@@ -108,67 +111,76 @@ public class ArticleService  extends CrudService<ArticleMapper, Article> {
 		}
 		article.setStatus("0");
 		dao.insert(article);
-		for(Sentence sentence:sentenceList.getSentences()){
-		    sentence.setContent(sentence.getContent().replaceAll(" "," "));
+		for(Sentence sentence:sentenceList){
+		    sentence.setContent(sentence.getContent().replaceAll("\r\n"," "));
 		    if(StringUtils.isBlank(sentence.getContent().trim())){
+		        sentenceIds.add("");
 		        continue;
 		    }
 			sentence.setArticleId(article.getId());
 			sentenceMapper.insert(sentence);
-			if(sentence.getWordList()!=null){
-    			for(Word word:sentence.getWordList()){
-    				word.setWordName(word.getWordName().toLowerCase());
-    				Map map = new HashMap();
-    		        map.put("wordName", word.getWordName());
-    				List<Word> wordList = wordMapper.selectByParam(map);
-    				if(wordList.size()>0){
-    					word.setId(wordList.get(0).getId());
-    				}else{
-    					Map detailMap = new HashMap();
-    					CloseableHttpResponse response = null;
-    					HttpRequestBase httpRequest = new HttpGet("http://dict-co.iciba.com/api/dictionary.php?w="+word.getWordName()+"&key="+KEY);
-    					try {
-    						response = HttpClientFactory.getHttpClient().execute(httpRequest);
-    					} catch (Exception e1) {
-    						System.out.println("查词失败:"+e1.getMessage());
-    					}
-    					int status = response.getStatusLine().getStatusCode();
-    					if(status == 200){
-    						try {
-    							detailMap = ParseIciba.parse(EntityUtils.toString(response.getEntity(),"utf-8"),word);
-    						} catch (Exception e) {
-    							System.out.println("解析查词结果失败:"+e.getMessage());
-    						}
-    
-    					}
-    					
-    					wordMapper.insert(word);
-    					if(detailMap.containsKey("acceptations")){
-    						List acceptations= (List)detailMap.get("acceptations");
-    						for(Iterator<Acceptation> iter = acceptations.iterator();iter.hasNext();){
-    							Acceptation acceptation = iter.next();
-    							acceptation.setWordId(word.getId());
-    							acceptationMapper.insert(acceptation);
-    						}
-    					}
-    					if(detailMap.containsKey("icibaSentence")){
-    						List icibaSentences= (List)detailMap.get("icibaSentence");
-    						for(Iterator<IcibaSentence> iter = icibaSentences.iterator();iter.hasNext();){
-    							IcibaSentence icibaSentence = iter.next();
-    							icibaSentence.setWordId(word.getId());
-    							icibaSentenceMapper.insert(icibaSentence);
-    						}
-    					}
-    					
-    				}
-    				
-    				SentenceWordRel sentenceWordRel = new SentenceWordRel();
-    				sentenceWordRel.setSentenceId(sentence.getId());
-    				sentenceWordRel.setWordId(word.getId());
-    				sentenceWordRelMapper.insert(sentenceWordRel);
-    				wordNum++;
-    			}
-    		}
+			sentenceIds.add(sentence.getId());
+		}
+    	
+		for(Word word:wordList){
+				word.setWordName(word.getWordName().toLowerCase());
+				Map map = new HashMap();
+		        map.put("wordName", word.getWordName());
+				List<Word> wordDbList = wordMapper.selectByParam(map);
+				if(wordDbList.size()>0){
+					word.setId(wordDbList.get(0).getId());//已存在数据库
+				}else{
+					Map detailMap = new HashMap();
+					CloseableHttpResponse response = null;
+					HttpRequestBase httpRequest = new HttpGet("http://dict-co.iciba.com/api/dictionary.php?w="+word.getWordName()+"&key="+KEY);
+					try {
+						response = HttpClientFactory.getHttpClient().execute(httpRequest);
+					} catch (Exception e1) {
+						System.out.println("查词失败:"+e1.getMessage());
+					}
+					int status = response.getStatusLine().getStatusCode();
+					if(status == 200){
+						try {
+							detailMap = ParseIciba.parse(EntityUtils.toString(response.getEntity(),"utf-8"),word);
+						} catch (Exception e) {
+							System.out.println("解析查词结果失败:"+e.getMessage());
+						}
+
+					}
+					
+					wordMapper.insert(word);
+					if(detailMap.containsKey("acceptations")){
+						List acceptations= (List)detailMap.get("acceptations");
+						for(Iterator<Acceptation> iter = acceptations.iterator();iter.hasNext();){
+							Acceptation acceptation = iter.next();
+							acceptation.setWordId(word.getId());
+							acceptationMapper.insert(acceptation);
+						}
+					}
+					if(detailMap.containsKey("icibaSentence")){
+						List icibaSentences= (List)detailMap.get("icibaSentence");
+						for(Iterator<IcibaSentence> iter = icibaSentences.iterator();iter.hasNext();){
+							IcibaSentence icibaSentence = iter.next();
+							icibaSentence.setWordId(word.getId());
+							icibaSentenceMapper.insert(icibaSentence);
+						}
+					}
+					
+				}
+				String sentenceIndexs = word.getSentenceIndexs();
+                sentenceIndexs = sentenceIndexs.replace("[", "");
+                sentenceIndexs = sentenceIndexs.replace("]", "");
+                String[] sentenceIndex = sentenceIndexs.split(",");
+                for(String index:sentenceIndex){
+                    if(StringUtils.isNotBlank(index)){
+        				SentenceWordRel sentenceWordRel = new SentenceWordRel();
+        				sentenceWordRel.setWordId(word.getId());
+        				sentenceWordRel.setSentenceId(sentenceIds.get(Integer.parseInt(index.trim())));
+        				sentenceWordRelMapper.insert(sentenceWordRel);
+                    }
+                }
+                
+                wordNum++;
 		}
 		article.setWordNum(wordNum);
 		dao.update(article);

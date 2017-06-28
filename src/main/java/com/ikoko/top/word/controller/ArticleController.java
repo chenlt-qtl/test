@@ -14,6 +14,10 @@
 */
 package com.ikoko.top.word.controller;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -29,6 +33,8 @@ import com.ikoko.top.common.utils.UserUtils;
 import com.ikoko.top.word.entity.Article;
 import com.ikoko.top.word.service.ArticleService;
 import com.ikoko.top.word.service.ArticleUserRelService;
+import com.ikoko.top.word.service.WordService;
+import com.ikoko.top.word.util.RequestUtil;
 
 /**
  * 描述：
@@ -43,6 +49,9 @@ public class ArticleController extends BaseController {
 	
 	@Autowired
     private ArticleUserRelService articleUserRelService;
+	
+	@Autowired
+    private WordService wordService;
     
     @RequestMapping(value = "/add")
     public String enterAdd(HttpServletRequest request, HttpServletResponse response) {
@@ -100,6 +109,21 @@ public class ArticleController extends BaseController {
                 writeMp3(response,article.getMp3());
             }
         }
+    }
+    
+    @RequestMapping(value = "/getContent")
+    public String getContent(HttpServletResponse response, HttpServletRequest request,Model model) throws IOException{
+        Map map = RequestUtil.getParameterMap(request);
+        String articleId = String.valueOf(map.get("id"));
+        Article article = articleService.get(articleId);
+        
+        model.addAttribute("articleId", articleId); 
+        model.addAttribute("title", article.getTitle());
+        model.addAttribute("content", article.getContent().replaceAll("\r\n", "</br>"));
+        List list = wordService.getByArticle(articleId);
+        model.addAttribute("words", list);
+        model.addAttribute("wordNum", list.size());
+        return "word/sentence/content";
     }
     
 }

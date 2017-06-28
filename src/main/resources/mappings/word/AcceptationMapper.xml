@@ -17,11 +17,11 @@
     where id = #{id}
   </select>
   
-  <select id="selectByWordId" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+  <select id="selectByWordId" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from w_acceptation
-    where word_id = #{wordId,jdbcType=BIGINT}
+    where word_id = #{wordId}
   </select>
   
   <delete id="delete" parameterType="java.lang.Long" >

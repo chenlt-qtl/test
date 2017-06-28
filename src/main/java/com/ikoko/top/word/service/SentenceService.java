@@ -17,6 +17,7 @@ package com.ikoko.top.word.service;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -58,21 +59,26 @@ public class SentenceService  extends CrudService<SentenceMapper, Sentence> {
         return dao.selectByWord(wordId);
     }
     
-    public List<Map<String,String>> analyArticle(String content) throws IOException{
+    public Map analyArticle(String content) throws IOException{
         content = com.ikoko.top.common.utils.StringUtils.unCleanXSS(content);
-        List<Map<String,String>> result = new ArrayList<Map<String,String>>();
+        Map result = new HashMap();
+        List<Map<String,String>> words = new ArrayList<Map<String,String>>();
         
         Map<String,Set> wordMap = new HashMap<String,Set>();
         
         String regEx="[。？！?.!\r]"; 
         Pattern p =Pattern.compile(regEx);  
         Matcher m = p.matcher(content);  
-        String[] sentences = p.split(content);  
-        if(sentences.length>0){
+        List<String> sentences = Arrays.asList(p.split(content));  
+        if(sentences.size()>0){
             
             Analyzer analyzer = new StandardAnalyzer(StopFilter.makeStopSet(STOP_WORD_ARR, true));
             
-            for(String sentence:sentences){
+            for(int i = 0; i<sentences.size();i++){
+                String sentence = sentences.get(i);
+                if(StringUtils.isBlank(sentence)){
+                    continue;
+                }
                 WordFilter filter = new WordFilter(analyzer.tokenStream("content", new StringReader(sentence)));  
                 filter.reset();  
                 CharTermAttribute charTermAttribute = filter.addAttribute(CharTermAttribute.class);  
@@ -80,9 +86,10 @@ public class SentenceService  extends CrudService<SentenceMapper, Sentence> {
                     String word = charTermAttribute.toString();
                     if(StringUtils.isNotBlank(word)){
                         if(wordMap.containsKey(word)){
-                            ((Set)wordMap.get(word)).add(sentence);
+                            ((Set)wordMap.get(word)).add(i);
                         }else{
-                            wordMap.put(word,new HashSet(){{ add(sentence); } });
+                            final int index = i;
+                            wordMap.put(word,new HashSet(){{ add(index); } });
                         }
                     }
                     
@@ -96,14 +103,14 @@ public class SentenceService  extends CrudService<SentenceMapper, Sentence> {
         for(String word:wordMap.keySet()){
             Map map = new HashMap();
             map.put("word", word);
-            System.out.println(word);
             Set sentenceSet = (Set)wordMap.get(word);
             map.put("count", sentenceSet.size());
-            map.put("sentences", sentenceSet);
-            System.out.println(sentenceSet);
-            result.add(map);
+            map.put("sentences", Arrays.asList(sentenceSet.toArray()));
+            words.add(map);
         }
 
+        result.put("words", words);
+        result.put("sentences", sentences);
         return result;
     }
 }

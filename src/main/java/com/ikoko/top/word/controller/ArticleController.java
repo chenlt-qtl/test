@@ -14,6 +14,7 @@
 */
 package com.ikoko.top.word.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -21,15 +22,24 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.ikoko.top.common.BaseController;
 import com.ikoko.top.common.Page;
+import com.ikoko.top.common.utils.JStringUtils;
+import com.ikoko.top.common.utils.JUploadUtils;
 import com.ikoko.top.common.utils.UserUtils;
+import com.ikoko.top.word.dto.SentenceListForm;
+import com.ikoko.top.word.dto.WordListForm;
 import com.ikoko.top.word.entity.Article;
 import com.ikoko.top.word.service.ArticleService;
 import com.ikoko.top.word.service.ArticleUserRelService;
@@ -55,7 +65,53 @@ public class ArticleController extends BaseController {
     
     @RequestMapping(value = "/add")
     public String enterAdd(HttpServletRequest request, HttpServletResponse response) {
-    	return "word/article/editArticle";
+    	return "word/article/addArticle";
+    }
+    
+    @ModelAttribute
+    public Article get(@RequestParam(required = false) String id) {
+        Article entity = null;
+        if (JStringUtils.isNotBlank(id)) {
+            entity = articleService.get(id);
+        }
+        if (entity == null) {
+            entity = new Article();
+        }
+        return entity;
+    }
+    
+    @RequestMapping(value = "/edit", method = RequestMethod.GET)
+    public String enterEdit(Model model,String id) {
+        if(StringUtils.isNotBlank(id)){
+            Article article = articleService.get(id);
+            model.addAttribute("article", article);
+        }
+        return "word/article/editArticle";
+    }
+    
+    @RequestMapping(value = "/save")
+    public String saveEdit(SentenceListForm sentences,WordListForm words,String id,String title,String content,@RequestParam("mp3") MultipartFile file, HttpServletRequest request, RedirectAttributes redirectAttributes) throws Exception {
+        Article article = null;
+        if(StringUtils.isBlank(id)){
+            article = new Article();
+            article.setContent(content);
+            article.setTitle(title);
+        }else{
+            article = articleService.get(id);
+            article.setTitle(title);
+        }
+        if(file != null){
+            if (!file.isEmpty()) {
+                if(StringUtils.isNotBlank(article.getMp3())){
+                    JUploadUtils.del("2", article.getMp3(), request);//删除已存在的文件
+                }
+                File targetFile = JUploadUtils.save("2",file, request);
+                article.setMp3(targetFile.getName());
+            }
+        }
+        articleService.saveArticle(sentences.getSentences(),words.getWords(),article);
+        addMessage(redirectAttributes, "保存成功");
+        return  "redirect:" + adminPath + "/article/articleList";
     }
     
     @RequestMapping(value = "/articleList")
@@ -98,17 +154,6 @@ public class ArticleController extends BaseController {
             addMessage(redirectAttributes, "删除成功");
         }
         return "redirect:" + adminPath + "/article/articleList?pageNo="+pageNo+"&pageSize="+pageSize;
-    }
-    
-    @RequestMapping(value = "/getMp3")
-    public void getMp3(HttpServletResponse response, HttpServletRequest request) {
-        Object id = request.getParameter("id");
-        if(id != null){
-            Article article = articleService.get(String.valueOf(id));
-            if(article.getMp3()!=null){
-                writeMp3(response,article.getMp3());
-            }
-        }
     }
     
     @RequestMapping(value = "/getContent")

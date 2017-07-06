@@ -5,10 +5,9 @@ import com.ikoko.top.sys.entity.DataEntity;
 public class Article  extends DataEntity<Article> {
     private static final long serialVersionUID = 1L;
     
-    private byte[] mp3;
+    private String mp3;
     private String title;
     String content;
-    private int hasMp3;
     private Integer wordNum;
     
     public String getTitle() {
@@ -19,20 +18,12 @@ public class Article  extends DataEntity<Article> {
         this.title = title;
     }
 
-    public byte[] getMp3() {
+    public String getMp3() {
         return mp3;
     }
 
-    public void setMp3(byte[] mp3) {
+    public void setMp3(String mp3) {
         this.mp3 = mp3;
-    }
-
-    public int getHasMp3() {
-        return hasMp3;
-    }
-
-    public void setHasMp3(int hasMp3) {
-        this.hasMp3 = hasMp3;
     }
 
     public Integer getWordNum() {

@@ -62,16 +62,16 @@
                                             <td>${article.title}</td>
                                             <td>${article.wordNum}</td>
                                             <td>
-                                                
-                                                <c:if test="${article.hasMp3==1}">
-                                                    <a href="${ctx}/article/getMp3?id=${article.id}"
-                                                       onclick="return play(this.href,this)" title="发音"><i class="fa fa-volume-up" aria-hidden="true"></i></a>
-                                                </c:if>
+                                                <a href="${ctx}/article/edit?id=${article.id}&pageNo=${page.pageNo}&pageSize=${page.pageSize}"  title="编辑"><span class="am-icon-pencil"></span></a>
                                                 <a href="${ctx}/article/delete?id=${article.id}&pageNo=${page.pageNo}&pageSize=${page.pageSize}"
                                                        onclick="return confirm('确认要删除该条数据吗？', this.href)" title="删除"><span
                                                             class="am-text-danger am-icon-trash-o"></span></a>
                                                 <a href="#" onclick="openModel(false,'${ctx}/article/getContent?id=${article.id}&pageNo=${page.pageNo}&pageSize=${page.pageSize}')" 
                                                         title="查看明细"><span class="am-text-primary am-icon-search"></span></a>
+                                                <c:if test="${article.mp3 ne null&&article.mp3 ne ''}">
+                                                    <a href="/file/mp3/${article.mp3}"
+                                                       onclick="return play(this.href,this)" title="发音"><span class="am-icon-volume-up"></span></a>
+                                                </c:if>
                                             </td>
                                         </tr>
                                     </c:forEach>
@@ -115,7 +115,7 @@
 		var audio = document.getElementById("audio");
 		if($(span).attr("class")=="oper oper-pause"){
 			audio.pause();
-	        $(span).attr("class","oper oper-play");
+	        $(span).attr("class","oper am-icon-volume-up");
 		}else{
 	        audio.src = href;
 	        audio.play();

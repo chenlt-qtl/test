@@ -17,14 +17,14 @@
         <div class="row-content am-cf">
             <div class="row">
                 <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
-                    <form id="addForm" class="am-form tpl-form-border-form" action="${ctx}/sentence/save" data-am-validator modelAttribute="article" method="post" enctype="multipart/form-data">
+                    <form id="addForm" class="am-form tpl-form-border-form" action="${ctx}/article/save" data-am-validator modelAttribute="article" method="post" enctype="multipart/form-data">
                     <div class="widget am-cf">
                         <div class="widget-head am-cf">
                             <div class="widget-title am-fl">名称：${article.title}</div>
                             </br>
                             </br>
                             <div class="am-form-group am-form-file">mp3：
-							  <i class="am-icon-cloud-upload"></i><span id='mp3_label'> <c:choose><c:when test="${1==article.hasMp3}">已选择</c:when><c:otherwise>请选择</c:otherwise></c:choose></span>
+							  <i class="am-icon-cloud-upload"></i><span id='mp3_label'> <c:choose><c:when test="${article.mp3 ne null && article.mp3 ne ''}">已选择</c:when><c:otherwise>请选择</c:otherwise></c:choose></span>
                               <input type="file" name="mp3" accept="audio/mpeg" multiple id='mp3'>
 							</div>
                         </div>

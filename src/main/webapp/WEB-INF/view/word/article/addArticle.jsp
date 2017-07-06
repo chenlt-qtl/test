@@ -24,7 +24,7 @@
                             <div class="widget-title am-fl">文章信息</div>
                         </div>
                         <div class="widget-body am-fr" id='addDiv'>
-                            <form id="addForm" class="am-form tpl-form-border-form" action="${ctx}/article/save" data-am-validator method="post" enctype="multipart/form-data">
+                            <form id="addForm" class="am-form tpl-form-border-form" action="${ctx}/sentence/analy" data-am-validator modelAttribute="article" method="post">
                                 <input type="hidden" name="id" value="${article.id}" />
                                 <div class="am-form-group">
                                     <label class="am-u-sm-3 am-form-label"><span class="error">*</span>名称：</label>
@@ -34,15 +34,14 @@
                                     </div>
                                 </div>
                                 <div class="am-form-group">
-                                    <label class="am-u-sm-3 am-form-label">mp3：</label>
-                                    <div id='mp3_div' class="am-form-group am-form-file">
-                                        <i class="am-icon-cloud-upload"></i><span id='mp3_label'> <c:choose><c:when test="${article.mp3 ne null && article.mp3 ne ''}">${article.mp3}</c:when><c:otherwise>请选择</c:otherwise></c:choose></span>
-                                        <input type="file" name="mp3" accept="audio/mpeg" multiple id='mp3'>
+                                    <label class="am-u-sm-3 am-form-label">内容：</label>
+                                    <div class="am-u-sm-9">
+                                        <textarea name="content" class="" rows="5">${article.content}</textarea>
                                     </div>
                                 </div>
                                 <div class="am-form-group">
                                     <div class="am-u-sm-9 am-u-sm-push-3">
-                                        <button type="submit" class="am-btn am-btn-primary">保存</button>
+                                        <button type="submit" class="am-btn am-btn-primary">下一步</button>
                                         <button type="button" class="am-btn am-btn-danger" onclick="closeModel(false)">关闭</button>
                                     </div>
                                 </div>
@@ -59,21 +58,6 @@
 <script type="text/javascript">
 
 $(document).ready(function() {
-	
-	var file;
-    var pullfiles=function(){ 
-        var fileInput = document.querySelector("#mp3");
-        file = fileInput.files[0];
-        if(file != null){
-            $("#mp3_label").html(" "+file.name);
-        }
-    }
-
-    document.querySelector("#mp3").onchange=pullfiles;
-    
-    if("${article.mp3}"){
-        $("#mp3_div").addClass("am-form-success");
-    }
     
     //消息提醒
     var msg = '${msg}';

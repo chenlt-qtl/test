@@ -89,11 +89,11 @@ public class UploadController extends BaseController {
 	 */
 	@RequestMapping(value = { "local" }, method = RequestMethod.POST)
 	public String uploadFile(
-			@RequestParam(value = "file", required = false) MultipartFile file,
+			@RequestParam(value = "file", required = false) MultipartFile file,String type,
 			HttpServletResponse response, HttpServletRequest request) {
 		ResultVo resultVo = null;
 		try {
-			File targetFile = JUploadUtils.save(file, request);
+			File targetFile = JUploadUtils.save(type,file, request);
 			resultVo = new ResultVo(ResultVo.SUCCESS, "0", "上传成功", targetFile.getName());
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -14,9 +14,7 @@
 */
 package com.ikoko.top.word.service;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -31,7 +29,6 @@ import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.ikoko.top.common.Page;
 import com.ikoko.top.common.service.CrudService;
@@ -80,37 +77,18 @@ public class ArticleService  extends CrudService<ArticleMapper, Article> {
 	
 	private final static String KEY="C772DB1F60B2839AD948507D91E7B04A"; 
 	
-	public void saveNewWord(List<Sentence> sentenceList,List<Word> wordList,String title,String content,MultipartFile file) throws IOException{
+	public void saveArticle(List<Sentence> sentenceList,List<Word> wordList,Article article) throws IOException{
 	    List<String> sentenceIds = new ArrayList<String>();
-		Article article = new Article();
-		article.setTitle(title);
-		content = com.ikoko.top.common.utils.StringUtils.unCleanXSS(content);
-		article.setContent(content);
-		int wordNum = 0;
-		if(file != null){
-		    if (!file.isEmpty()) {    
-		        byte [] mp3=new byte[1024];  //接收缓存   
-		        InputStream fis = null; 
-	            ByteArrayOutputStream baos = null;
-	            fis = null;
-		        try {
-                    fis = file.getInputStream();
-                    baos =  new ByteArrayOutputStream();
-                    int len;
-                    while( (len=fis.read(mp3))>0){ //接收
-                        baos.write(mp3,0,len);
-                    }
-                    article.setMp3(baos.toByteArray());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } finally{
-                    baos.close();
-                    fis.close();
-                }
-		    }
+		if(article.getIsNewId()){
+    		String content = com.ikoko.top.common.utils.StringUtils.unCleanXSS(article.getContent());
+    		article.setContent(content);
+    		article.setStatus("0");
+    		dao.insert(article);
+		}else{
+		    dao.update(article);
+		    return;
 		}
-		article.setStatus("0");
-		dao.insert(article);
+		int wordNum = 0;
 		for(Sentence sentence:sentenceList){
 		    sentence.setContent(sentence.getContent().replaceAll("\r\n"," "));
 		    if(StringUtils.isBlank(sentence.getContent().trim())){

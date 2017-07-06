@@ -14,31 +14,31 @@
 */
 package com.ikoko.top.word.controller;
 
+import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.http.client.ClientProtocolException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.ikoko.top.common.BaseController;
+import com.ikoko.top.common.utils.JStringUtils;
+import com.ikoko.top.common.utils.JUploadUtils;
 import com.ikoko.top.word.dto.SentenceListForm;
 import com.ikoko.top.word.dto.WordListForm;
 import com.ikoko.top.word.entity.Article;
-import com.ikoko.top.word.entity.Sentence;
 import com.ikoko.top.word.service.ArticleService;
 import com.ikoko.top.word.service.SentenceService;
-import com.ikoko.top.word.service.WordService;
-import com.ikoko.top.word.util.RequestUtil;
 
 /**
  * 描述：
@@ -51,15 +51,30 @@ public class SentenceController extends BaseController{
 	@Autowired
     private ArticleService articleService;
 	
-    @Autowired
-    private WordService wordService;
-	
 	@Autowired
     private SentenceService sentenceService;
 	
-    @RequestMapping(value = "/save")
-    public String save(SentenceListForm sentences,WordListForm words,String content,String title,@RequestParam("mp3") MultipartFile file, HttpServletResponse response, RedirectAttributes redirectAttributes) throws ClientProtocolException, IOException {
-    	articleService.saveNewWord(sentences.getSentences(),words.getWords(),title,content,file);
+	@ModelAttribute
+    public Article get(@RequestParam(required = false) String id) {
+	    Article entity = null;
+        if (JStringUtils.isNotBlank(id)) {
+            entity = articleService.get(id);
+        }
+        if (entity == null) {
+            entity = new Article();
+        }
+        return entity;
+    }
+	
+    @RequestMapping(value = "/save", method = RequestMethod.POST)
+    public String save(SentenceListForm sentences,WordListForm words,Article article,@RequestParam("mp3") MultipartFile file,HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) throws Exception {
+        if(file != null){
+            if (!file.isEmpty()) {    
+                File targetFile = JUploadUtils.save("2",file, request);
+                article.setMp3(targetFile.getName());
+            }
+        }
+        articleService.saveArticle(sentences.getSentences(),words.getWords(),article);
         addMessage(redirectAttributes, "保存成功");
         return "redirect:" + adminPath + "/article/articleList";
     }

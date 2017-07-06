@@ -29,7 +29,7 @@
 									<div class="am-u-sm-9 am-margin-top-xs">
 										<div class="am-form-group am-form-file">
 											<div class="tpl-form-file-img tpl-user-panel-profile-picture">
-                                                <img id="showPic" src="/photo/${user.photo}<c:if test="${empty user.photo}">user06.png</c:if>" alt="用户图像">
+                                                <img id="showPic" src="/file/photo/${user.photo}<c:if test="${empty user.photo}">user06.png</c:if>" alt="用户图像">
 											</div>
 											<button type="button" id="uploadPic" class="am-btn am-btn-danger am-btn-sm ">
 												<i class="am-icon-cloud-upload"></i> 上传</button>
@@ -104,6 +104,7 @@
 		$("#file").change(function(){
 			$.ajaxFileUpload({
 				url: '${ctx}/upload/local',
+				data:{type:"1"},
 				type: 'post',
 				secureuri: false,
 				fileElementId: 'file',
@@ -111,7 +112,7 @@
 				success: function (data, status){
 					data = JSON.parse(delHtmlTag(data));
 					if(data.ret==1){
-                        $("#showPic").attr("src",'/photo/'+data.data);
+                        $("#showPic").attr("src",'/file/photo/'+data.data);
 						$("#photo").val(data.data);
 					}else{
 						alert(data.msg);

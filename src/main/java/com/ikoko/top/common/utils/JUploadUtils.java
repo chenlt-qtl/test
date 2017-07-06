@@ -1,16 +1,28 @@
 package com.ikoko.top.common.utils;
 
-import com.ikoko.top.common.config.JConfig;
-import org.springframework.web.multipart.MultipartFile;
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.ikoko.top.common.config.JConfig;
+import com.ikoko.top.common.exception.WordException;
 
 /**
  * 上传文件服务工具类
  * @author iutils.cn
  */
 public class JUploadUtils {
+    
+    private static Map<String,String> DIR_NAMES = new HashMap<String,String>(){{
+        put("1", "photo");
+        put("2", "mp3");
+        put("3", "ph_mp3");
+    }};
 
     /**
      * 文件保存 默认保存在工程同级目录下面
@@ -51,7 +63,11 @@ public class JUploadUtils {
      */
     public static File save(String fileType,MultipartFile file,HttpServletRequest request) throws Exception{
         // 获取本地存储路径
-        String path = getUploadPath(request)+File.separator+fileType;
+        String dirName = DIR_NAMES.get(fileType);
+        if(StringUtils.isBlank(dirName)){
+            throw new WordException("上传类型参数错误");
+        }
+        String path = getUploadPath(request)+File.separator+dirName;
         String fileName = file.getOriginalFilename();
         // 取得后缀
         String suffixString = fileName
@@ -85,11 +101,25 @@ public class JUploadUtils {
      * 获取文件存放位置
      * @param request
      * @return
+     * @throws WordException 
      */
-    public static String getUploadPath(HttpServletRequest request){
+    public static String getUploadPath(HttpServletRequest request) throws WordException{
         String path = request.getSession().getServletContext().getRealPath("/");
         path = path.substring(0,path.substring(0,path.length()-1).lastIndexOf(File.separator)+1);
         return path+JConfig.getConfig(JConfig.FILEUPLOAD);
+    }
+    
+    public static void del(String fileType,String fileName,HttpServletRequest request) throws Exception{
+        String dirName = DIR_NAMES.get(fileType);
+        if(StringUtils.isBlank(dirName)){
+            throw new WordException("上传类型参数错误");
+        }
+        String path = getUploadPath(request)+File.separator+dirName;
+
+        File targetFile = new File(path, fileName);
+        if (targetFile.exists()) {
+            targetFile.delete();
+        }
     }
 
 }

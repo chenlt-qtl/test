@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.ikoko.top.word.dao.ArticleMapper" >
-    <sql id="articleColumnsWithOutMp3">
-        a.id, title,a.status,word_num as wordNum ,CASE when mp3 is NULL then 0 else 1 END as hasMp3
-    </sql>
-    
+<mapper namespace="com.ikoko.top.word.dao.ArticleMapper" >  
     <sql id="articleColumns">
         id ,title,mp3,status,word_num,content
     </sql>
@@ -23,13 +19,13 @@
     </select>
 
     <select id="selectByIdWithoutMp3" resultType="com.ikoko.top.word.entity.Article">
-        SELECT <include refid="articleColumnsWithOutMp3"/> FROM w_article a 
+        SELECT <include refid="articleColumns"/> FROM w_article a 
         <where>
             status = '0' and id = #{id}
         </where>
     </select>
     <select id="findPage" resultType="com.ikoko.top.word.entity.Article">
-        SELECT <include refid="articleColumnsWithOutMp3"/> FROM w_article a 
+        SELECT <include refid="articleColumns"/> FROM w_article a 
         <where>
             a.status = '0' 
             <if test="page.entity.user != null and page.entity.user.id != null and page.entity.user.id != ''">
@@ -58,7 +54,7 @@
     </select>
 
     <select id="findOtherPage" resultType="com.ikoko.top.word.entity.Article">
-        SELECT <include refid="articleColumnsWithOutMp3"/> FROM w_article a 
+        SELECT <include refid="articleColumns"/> FROM w_article a 
         <where>
             a.status = '0' 
             <if test="page.entity.user != null and page.entity.user.id != null and page.entity.user.id != ''">
@@ -84,13 +80,14 @@
 		<include refid="articleColumns" />
 		)
 		values (#{id,jdbcType=BIGINT}, #{title,jdbcType=VARCHAR},
-		#{mp3,jdbcType=LONGVARBINARY},#{status,jdbcType=TINYINT},#{wordNum,jdbcType=INTEGER}, #{content,jdbcType=VARCHAR})
+		#{mp3,jdbcType=VARCHAR},#{status,jdbcType=TINYINT},#{wordNum,jdbcType=INTEGER}, #{content,jdbcType=VARCHAR})
 	</insert>
 	
 	<update id="update">
         update w_article
             set title = #{title,jdbcType=VARCHAR},
             status = #{status,jdbcType=BIT},
+            mp3 = #{mp3,jdbcType=VARCHAR},
             word_num = #{wordNum,jdbcType=INTEGER},
             content = #{content,jdbcType=VARCHAR}
         where id = #{id,jdbcType=BIGINT}

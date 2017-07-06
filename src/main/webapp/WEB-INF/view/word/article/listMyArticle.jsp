@@ -63,10 +63,9 @@
                                             <td>${article.wordNum}</td>
                                             <td>
                                                 
-                                                <c:if test="${article.hasMp3==1}">
-                                                    <a href="${ctx}/article/getMp3?id=${article.id}"
-                                                       onclick="return play(this.href,this)" title="发音"><span
-                                                            class="oper oper-play"></span></a>
+                                                <c:if test="${article.mp3 ne null && article.mp3 ne ''}">
+                                                    <a href="/file/mp3/${article.mp3}"
+                                                       onclick="return play(this.href,this)" title="发音"><span class="am-icon-volume-up"></span></a>
                                                 </c:if>
                                                 <a href="${ctx}/articleUserRel/delete?id=${article.id}&pageNo=${page.pageNo}&pageSize=${page.pageSize}"
                                                        onclick="return confirm('确认要删除该条数据吗？', this.href)" title="删除"><span
@@ -118,7 +117,7 @@
 		var audio = document.getElementById("audio");
 		if($(span).attr("class")=="oper oper-pause"){
 			audio.pause();
-	        $(span).attr("class","oper oper-play");
+	        $(span).attr("class","oper am-icon-volume-up");
 		}else{
 	        audio.src = href;
 	        audio.play();

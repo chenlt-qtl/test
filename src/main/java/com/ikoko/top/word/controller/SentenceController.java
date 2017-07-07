@@ -70,11 +70,11 @@ public class SentenceController extends BaseController{
     public String save(SentenceListForm sentences,WordListForm words,Article article,@RequestParam("mp3") MultipartFile file,HttpServletRequest request, HttpServletResponse response, RedirectAttributes redirectAttributes) throws Exception {
         if(file != null){
             if (!file.isEmpty()) {    
-                File targetFile = JUploadUtils.save("2",file, request);
+                File targetFile = JUploadUtils.save("2",file, JUploadUtils.getUploadPath(request),JStringUtils.getRemoteAddr(request));
                 article.setMp3(targetFile.getName());
             }
         }
-        articleService.saveArticle(sentences.getSentences(),words.getWords(),article);
+        articleService.saveArticle(sentences.getSentences(),words.getWords(),article, JUploadUtils.getUploadPath(request),JStringUtils.getRemoteAddr(request));
         addMessage(redirectAttributes, "保存成功");
         return "redirect:" + adminPath + "/article/articleList";
     }

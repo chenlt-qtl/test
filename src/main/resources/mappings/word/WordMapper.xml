@@ -5,14 +5,12 @@
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="word_name" property="wordName" jdbcType="VARCHAR" />
     <result column="ph_am" property="phAm" jdbcType="VARCHAR" />
+    <result column="ph_am_mp3" property="phAmMp3" jdbcType="VARCHAR" />
     <result column="exchange" property="exchange" jdbcType="VARCHAR" />
     <result column="parts" property="parts" jdbcType="VARCHAR" />
   </resultMap>
-  <resultMap id="ResultMapWithBLOBs" type="com.ikoko.top.word.entity.Word" extends="BaseResultMap" >
-    <result column="ph_am_mp3" property="phAmMp3" jdbcType="LONGVARBINARY" />
-  </resultMap>
   <sql id="Base_Column_List" >
-    id, word_name, ph_am, exchange, parts
+    id, word_name, ph_am, ph_am_mp3, exchange, parts
   </sql>
   <sql id="Blob_Column_List" >
     ph_am_mp3
@@ -26,7 +24,7 @@
     from w_word
     where id = #{id}
   </select>
-  <select id="selectByParam" resultMap="ResultMapWithBLOBs">
+  <select id="selectByParam" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     ,
@@ -58,19 +56,11 @@
       #{exchange,jdbcType=VARCHAR}, #{parts,jdbcType=VARCHAR}, #{phAmMp3,jdbcType=LONGVARBINARY}
       )
   </insert>
-  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.ikoko.top.word.entity.Word" >
-    update word
-    set word_name = #{wordName,jdbcType=VARCHAR},
-      ph_am = #{phAm,jdbcType=VARCHAR},
-      exchange = #{exchange,jdbcType=VARCHAR},
-      parts = #{parts,jdbcType=VARCHAR},
-      ph_am_mp3 = #{phAmMp3,jdbcType=LONGVARBINARY}
-    where id = #{id,jdbcType=BIGINT}
-  </update>
   <update id="update" parameterType="com.ikoko.top.word.entity.Word" >
     update word
     set word_name = #{wordName,jdbcType=VARCHAR},
       ph_am = #{phAm,jdbcType=VARCHAR},
+      ph_am_mp3 = #{phAmMp3,jdbcType=VARCHAR},
       exchange = #{exchange,jdbcType=VARCHAR},
       parts = #{parts,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}

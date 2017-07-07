@@ -55,7 +55,7 @@
                                         <td>${word.wordName}</td>
                                         <td>${word.phAm}</td>
                                         <td>
-                                            <a href="${ctx}/word/getMp3?id=${word.id}" onclick="return play(this.href,this)" title="发音"><span
+                                            <a href="/file/ph_mp3/${word.phAmMp3}" onclick="return play(this.href,this)" title="发音"><span
                                                 class="am-icon-volume-up"></span></a>
                                             <a href="${ctx}/word/detail?id=${word.id}&pageNo=${page.pageNo}&pageSize=${page.pageSize}"
                                                 onclick="openModel(false,this.href)" title="查看明细"><span class="am-text-primary am-icon-search"></span></a>

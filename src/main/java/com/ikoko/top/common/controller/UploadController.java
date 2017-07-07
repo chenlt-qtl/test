@@ -16,6 +16,7 @@ import org.apache.commons.codec.binary.Base64;
 import com.ikoko.top.common.ResultVo;
 import com.ikoko.top.common.config.JConfig;
 import com.ikoko.top.common.utils.JFileUtils;
+import com.ikoko.top.common.utils.JStringUtils;
 import com.ikoko.top.common.utils.JUploadUtils;
 import com.ikoko.top.common.utils.UserUtils;
 import com.ikoko.top.common.utils.qiniu.QiniuApi;
@@ -93,7 +94,7 @@ public class UploadController extends BaseController {
 			HttpServletResponse response, HttpServletRequest request) {
 		ResultVo resultVo = null;
 		try {
-			File targetFile = JUploadUtils.save(type,file, request);
+			File targetFile = JUploadUtils.save(type,file, JUploadUtils.getUploadPath(request),JStringUtils.getRemoteAddr(request));
 			resultVo = new ResultVo(ResultVo.SUCCESS, "0", "上传成功", targetFile.getName());
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -47,15 +47,6 @@ public class WordController extends BaseController{
     @Autowired
     private SentenceService sentenceService;    
     
-    @RequestMapping(value="/getMp3")
-    public void getMp3(HttpServletResponse response, HttpServletRequest request) {
-        Object id = request.getParameter("id");
-        if(id != null){
-            Word word = wordService.getMp3(String.valueOf(id));
-            writeMp3(response, word.getPhAmMp3());
-        }
-    }
-    
     @RequestMapping(value="/detail")
     public String enterDetail(HttpServletRequest request,Model model) {
         Object id = request.getParameter("id");

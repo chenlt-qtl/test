@@ -77,7 +77,7 @@ public class ArticleService  extends CrudService<ArticleMapper, Article> {
 	
 	private final static String KEY="C772DB1F60B2839AD948507D91E7B04A"; 
 	
-	public void saveArticle(List<Sentence> sentenceList,List<Word> wordList,Article article) throws IOException{
+	public void saveArticle(List<Sentence> sentenceList,List<Word> wordList,Article article,String path,String ip) throws IOException{
 	    List<String> sentenceIds = new ArrayList<String>();
 		if(article.getIsNewId()){
     		String content = com.ikoko.top.common.utils.StringUtils.unCleanXSS(article.getContent());
@@ -119,7 +119,7 @@ public class ArticleService  extends CrudService<ArticleMapper, Article> {
 					int status = response.getStatusLine().getStatusCode();
 					if(status == 200){
 						try {
-							detailMap = ParseIciba.parse(EntityUtils.toString(response.getEntity(),"utf-8"),word);
+							detailMap = ParseIciba.parse(EntityUtils.toString(response.getEntity(),"utf-8"),word,path,ip);
 						} catch (Exception e) {
 							System.out.println("解析查词结果失败:"+e.getMessage());
 						}

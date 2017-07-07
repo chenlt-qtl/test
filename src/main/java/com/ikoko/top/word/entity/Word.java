@@ -10,7 +10,7 @@ public class Word  extends DataEntity<Word> {
     private String phAm;
     private String exchange;
     private String parts;
-    private byte[] phAmMp3;
+    private String phAmMp3;
     private List<Acceptation> acceptations = new ArrayList<Acceptation>(); 
     
     private String sentenceIndexs;
@@ -41,11 +41,12 @@ public class Word  extends DataEntity<Word> {
     public void setParts(String parts) {
         this.parts = parts;
     }
-    public byte[] getPhAmMp3() {
+   
+    public String getPhAmMp3() {
         return phAmMp3;
     }
 
-    public void setPhAmMp3(byte[] phAmMp3) {
+    public void setPhAmMp3(String phAmMp3) {
         this.phAmMp3 = phAmMp3;
     }
 

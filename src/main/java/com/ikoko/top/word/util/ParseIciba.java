@@ -32,6 +32,7 @@ import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
+import com.ikoko.top.common.utils.JUploadUtils;
 import com.ikoko.top.word.entity.Acceptation;
 import com.ikoko.top.word.entity.IcibaSentence;
 import com.ikoko.top.word.entity.Word;
@@ -43,7 +44,7 @@ import com.ikoko.top.word.entity.Word;
  */
 public class ParseIciba {
 
-	public static Map parse(String data,Word word) throws Exception{
+	public static Map parse(String data,Word word,String path,String ip) throws Exception{
 		Map result = new HashMap();
 		Document doc = DocumentHelper.parseText(data);
 		Element rootElt = doc.getRootElement(); // 获取根节点
@@ -62,15 +63,9 @@ public class ParseIciba {
 				InputStream in = null;
 				ByteArrayOutputStream baos = null;
 				try {
-					in = new URL(pronElement.getTextTrim()).openConnection().getInputStream();//创建连接、输入流
-					baos = new ByteArrayOutputStream();
-			        
-					byte [] mp3=new byte[1024];  //接收缓存
-					int len;
-					while( (len=in.read(mp3))>0){ //接收
-					    baos.write(mp3,0,len);
-					}
-			        word.setPhAmMp3(baos.toByteArray());
+				    String mp3 = JUploadUtils.save("3", pronElement.getTextTrim(), path,ip);
+					
+			        word.setPhAmMp3(mp3);
 				} catch (Exception e) {
 					e.printStackTrace();
 				} finally{
@@ -119,12 +114,5 @@ public class ParseIciba {
 	}
 	
 	public static void main(String args[]) throws IOException, Exception{
-		File file = new File(ParseIciba.class.getClassLoader().getResource("").getPath() + "a.xml");
-		Word word = new Word();
-		word.setWordName("identify");
-		Map map = ParseIciba.parse(FileUtils.readFileToString(file, "utf-8"),word);
-		List list1= (List)map.get("acceptations");
-		List list2= (List)map.get("icibaSentence");
-		System.out.println(map.get("acceptations").toString());
 	}
 }

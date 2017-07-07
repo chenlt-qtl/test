@@ -105,11 +105,11 @@ public class ArticleController extends BaseController {
                 if(StringUtils.isNotBlank(article.getMp3())){
                     JUploadUtils.del("2", article.getMp3(), request);//删除已存在的文件
                 }
-                File targetFile = JUploadUtils.save("2",file, request);
+                File targetFile = JUploadUtils.save("2",file, JUploadUtils.getUploadPath(request),JStringUtils.getRemoteAddr(request));
                 article.setMp3(targetFile.getName());
             }
         }
-        articleService.saveArticle(sentences.getSentences(),words.getWords(),article);
+        articleService.saveArticle(sentences.getSentences(),words.getWords(),article,JUploadUtils.getUploadPath(request),JStringUtils.getRemoteAddr(request));
         addMessage(redirectAttributes, "保存成功");
         return  "redirect:" + adminPath + "/article/articleList";
     }

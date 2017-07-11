@@ -59,5 +59,5 @@ public class WordController extends BaseController{
         model.addAttribute("sentences", sentenceService.selectByWord(String.valueOf(word.getId())));
         return "word/wordDetail";
     }
-
+    
 }

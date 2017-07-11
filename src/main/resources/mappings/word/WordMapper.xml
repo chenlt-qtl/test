@@ -37,11 +37,14 @@
     </where>
   </select>
   
-  <select id="selectByArticleId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+  <select id="selectByArticleId" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
     from w_word a where exists (select 1 from w_sentence_word_rel b where a.id = b.word_id and 
         exists (select 1 from w_sentence c where c.id = b.sentence_id and c.article_id = #{articleId,jdbcType=VARCHAR}))
+    <if test="start!=null and limit !=null">
+             LIMIT #{start},#{limit}
+    </if>
   </select>
   
   <delete id="delete" parameterType="java.lang.Long" >

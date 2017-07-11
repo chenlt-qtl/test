@@ -17,13 +17,6 @@
             </if>
         </where>
     </select>
-
-    <select id="selectByIdWithoutMp3" resultType="com.ikoko.top.word.entity.Article">
-        SELECT <include refid="articleColumns"/> FROM w_article a 
-        <where>
-            status = '0' and id = #{id}
-        </where>
-    </select>
     <select id="findPage" resultType="com.ikoko.top.word.entity.Article">
         SELECT <include refid="articleColumns"/> FROM w_article a 
         <where>

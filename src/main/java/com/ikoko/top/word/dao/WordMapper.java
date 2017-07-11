@@ -11,5 +11,5 @@ public interface WordMapper extends ICrudDao<Word> {
     
     List<Word> selectByParam(Map map);
     
-    List<Word> selectByArticleId(String articleId);
+    List<Word> selectByArticleId(Map map);
 }

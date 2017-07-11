@@ -56,10 +56,6 @@ import com.ikoko.top.word.util.ParseIciba;
 @Transactional(readOnly = true)
 public class ArticleService  extends CrudService<ArticleMapper, Article> {
 	
-   public Article getByIdWithoutMp3(String id){
-        return dao.selectByIdWithoutMp3(Long.parseLong(id));
-    }
-	
 	@Autowired
 	private SentenceMapper sentenceMapper;
 	
@@ -150,7 +146,7 @@ public class ArticleService  extends CrudService<ArticleMapper, Article> {
                 sentenceIndexs = sentenceIndexs.replace("]", "");
                 String[] sentenceIndex = sentenceIndexs.split(",");
                 for(String index:sentenceIndex){
-                    if(StringUtils.isNotBlank(index)){
+                    if(StringUtils.isNotBlank(index)&&StringUtils.isNotBlank(sentenceIds.get(Integer.parseInt(index.trim())))){
         				SentenceWordRel sentenceWordRel = new SentenceWordRel();
         				sentenceWordRel.setWordId(word.getId());
         				sentenceWordRel.setSentenceId(sentenceIds.get(Integer.parseInt(index.trim())));

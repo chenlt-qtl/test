@@ -26,7 +26,9 @@
                                                                                             第${level}关<br/>
                                                                                             共${totalLevel}关
                         </div>
-                        <button style="margin-left:350px;" type="button" onclick="openModel(false,'${ctx}/articleLevel/levelList?id=${article.id}&title=${article.title}&pageNo=${page.pageNo}&pageSize=${page.pageSize}')" class="am-btn am-btn-secondary am-round">开始闯关</button>
+                        <button style="margin-left:310px;" type="button" onclick="openModel(false,'${ctx}/articleLevel/levelList?id=${article.id}&title=${article.title}&pageNo=${page.pageNo}&pageSize=${page.pageSize}')" class="am-btn am-btn-secondary am-round">开始闯关</button>
+                        <button style="margin-left:20px;" type="button" onclick="closeModel(false)" class="am-btn am-btn-secondary am-round">关闭</button>
+                        
                     </div>
                 </div>
             </div>

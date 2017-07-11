@@ -19,8 +19,6 @@ public interface ArticleMapper extends ICrudDao<Article> {
 
     Article selectByPrimaryKey(Long id);
     
-    Article selectByIdWithoutMp3(Long id);
-
     int updateByPrimaryKeySelective(Article record);
     
     public int countOther(@Param("page") Page<Article> page);

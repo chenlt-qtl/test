@@ -81,3 +81,11 @@
 .oper-start {
     background-image: url("img/2.png");
 }
+
+.oper-favor {
+    background-image: url("img/favor.png");
+}
+
+.oper-favor_fill {
+    background-image: url("img/favor_fill.png");
+}

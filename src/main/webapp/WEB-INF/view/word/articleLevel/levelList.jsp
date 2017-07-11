@@ -20,7 +20,26 @@
                         <div class="widget-head am-cf">
                             <div class="widget-title am-fl">${article.title}</div>
                         </div>
-                        <div id='level'></div>
+                        <div id='level'>
+	                        <c:forEach var="i" begin="1" end="${totalLevel}" step="1">   
+								<c:set var='level' value="${totalLevel-i+1}"/>
+								<c:set var='star' value="0"/>
+								<c:if test="${levels[level] ne null}">
+								    <c:set var='star' value="${levels[level].star}"/>
+								</c:if> 
+								<a href="#" onclick="openModel(false,'${ctx}/articleLevel/editLevel?articleId=${article.id}&level=${level}<c:if test="${levels[level] ne null}">&id=${levels[level].id}</c:if> ')" >${level}</a>
+								<c:forEach var="ii" begin="1" end="3" step="1"> 
+								    <c:if test="${star>=ii}">
+								        <i class="am-icon-star" aria-hidden="true"></i>
+								    </c:if>  
+								    <c:if test="${star<ii}">
+                                        <i class="am-icon-star-o" aria-hidden="true"></i>
+                                    </c:if>  
+								</c:forEach>
+								
+								<br>   
+							</c:forEach>  
+                        </div>
                     </div>
                 </div>
             </div>
@@ -29,8 +48,8 @@
 </div>
 <%@ include file="../../include/bottom.jsp"%>
 <script type="text/javascript">
-var levelsStr = '${levels}';
-alert(levelsStr);
+var totalLevel = '${totalLevel}';
+
 </script>
 </body>
 </html>

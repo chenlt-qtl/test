@@ -57,12 +57,6 @@ public class ArticleLevelController extends BaseController {
     @Autowired
     private WordService wordService;
     
-    @Autowired
-    private IcibaSentenceService icibaSentenceService;    
-    
-    @Autowired
-    private SentenceService sentenceService;   
-    
     @RequestMapping(value = "/level")
     public String enterLevel(HttpServletRequest request, HttpServletResponse response,Model model) {
         Object id = request.getParameter("id");
@@ -123,17 +117,14 @@ public class ArticleLevelController extends BaseController {
     }
     
     @RequestMapping(value="/recite")
-    public String recite(String words,int index,HttpServletRequest request,Model model) {
-        String[] wordArr = words.split(",");
-        String wordId = wordArr[index-1];
-        if(wordId != null){
-            Word word = wordService.getById(wordId);
-            model.addAttribute("word", word);
-            model.addAttribute("icibaSentence", icibaSentenceService.selectByWordId(String.valueOf(word.getId())));
-            model.addAttribute("sentences", sentenceService.selectByWord(String.valueOf(word.getId())));
-            model.addAttribute("index", index);
-            model.addAttribute("words", words);
-        }
+    public String recite(String words,HttpServletRequest request,Model model) {
+        model.addAttribute("words", words);
         return "word/articleLevel/recite";
+    }
+    
+    @RequestMapping(value="/test")
+    public String test(String ids,HttpServletRequest request,Model model) {
+        model.addAttribute("words", ids);
+        return "word/articleLevel/test";
     }
 }

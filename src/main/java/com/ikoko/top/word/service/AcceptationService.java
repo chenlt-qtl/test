@@ -36,4 +36,8 @@ public class AcceptationService {
     public List<Acceptation> getByWordId(String wordId){
         return acceptationMapper.selectByWordId(wordId);
     }
+    
+    public List<Acceptation> getByWordIds(String[] wordIds){
+        return acceptationMapper.selectByWordIds(wordIds);
+    }
 }

@@ -94,7 +94,7 @@ public abstract class BaseController {
 			response.setCharacterEncoding("utf-8");
 			response.getWriter().print(string);
 			return null;
-		} catch (IOException e) {
+		} catch (Exception e) {
 			return null;
 		}
 	}

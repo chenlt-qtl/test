@@ -49,7 +49,6 @@
 <%@ include file="../../include/bottom.jsp"%>
 <script type="text/javascript">
 var totalLevel = '${totalLevel}';
-
 </script>
 </body>
 </html>

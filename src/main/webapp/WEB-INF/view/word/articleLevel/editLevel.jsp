@@ -43,7 +43,6 @@
 </div>
 <%@ include file="../../include/bottom.jsp"%>
 <script type="text/javascript">
-
 function recite(){
 	var words = '';
 	$("tbody").find("[name='wordId']").each(function(){

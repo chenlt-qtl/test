@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,6 +39,12 @@ public class IcibaSentenceService  extends CrudService<IcibaSentenceMapper, Icib
     public List<IcibaSentence> selectByWordId(String wordId){
         Map map = new HashMap();
         map.put("wordId", wordId);
+        return dao.select(map);
+    }
+    
+    public List<IcibaSentence> selectByWordIds(String[] wordIds){
+        Map map = new HashMap();
+        map.put("wordIds", wordIds);
         return dao.select(map);
     }
 }

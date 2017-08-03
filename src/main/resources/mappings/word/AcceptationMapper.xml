@@ -21,7 +21,26 @@
     select 
     <include refid="Base_Column_List" />
     from w_acceptation
-    where word_id = #{wordId}
+    <where>
+        <if test="wordId!=null and wordId != ''">
+            word_id = #{wordId}
+        </if>
+    </where>
+  </select>
+  
+  
+  <select id="selectByWordIds" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from w_acceptation
+    <where>
+        <if test="wordIds!=null and wordIds != ''">
+            word_id in  
+            <foreach item="id" index="index" collection="wordIds" open="(" separator="," close=")">  
+                #{id}
+            </foreach>
+        </if>
+    </where>
   </select>
   
   <delete id="delete" parameterType="java.lang.Long" >

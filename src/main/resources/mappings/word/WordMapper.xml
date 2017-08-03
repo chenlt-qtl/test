@@ -12,27 +12,35 @@
   <sql id="Base_Column_List" >
     id, word_name, ph_am, ph_am_mp3, exchange, parts
   </sql>
-  <sql id="Blob_Column_List" >
-    ph_am_mp3
-  </sql>
   
   <select id="get" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
     from w_word
     where id = #{id}
   </select>
+  
   <select id="selectByParam" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
     from w_word
     <where>
         <if test="wordName!=null and wordName!=''">
             word_name = #{wordName}
+        </if>
+    </where>
+  </select>
+  
+  <select id="selectWords" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from w_word
+    <where>
+        <if test="wordIds!=null and wordIds!=''">
+            id in  
+            <foreach item="wordId" index="index" collection="wordIds" open="(" separator="," close=")">  
+                #{wordId}
+            </foreach>
         </if>
     </where>
   </select>
@@ -51,6 +59,7 @@
     delete from word
     where id = #{id,jdbcType=BIGINT}
   </delete>
+  
   <insert id="insert" parameterType="com.ikoko.top.word.entity.Word" useGeneratedKeys="true" keyProperty="id">
     insert into w_word (id, word_name, ph_am, 
       exchange, parts, ph_am_mp3
@@ -59,6 +68,7 @@
       #{exchange,jdbcType=VARCHAR}, #{parts,jdbcType=VARCHAR}, #{phAmMp3,jdbcType=LONGVARBINARY}
       )
   </insert>
+  
   <update id="update" parameterType="com.ikoko.top.word.entity.Word" >
     update word
     set word_name = #{wordName,jdbcType=VARCHAR},

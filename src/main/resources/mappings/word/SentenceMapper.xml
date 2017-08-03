@@ -26,7 +26,11 @@
     select 
     <include refid="Base_Column_List" />
     from w_sentence a
-    where exists (select 1 from w_sentence_word_rel b where a.id =b.sentence_id and b.word_id = #{wordId})
+    where exists (select 1 from w_sentence_word_rel b where a.id =b.sentence_id 
+    <if test="wordId!=null and wordId != ''">
+            and b.word_id = #{wordId}
+    </if>
+    )
   </select>
   <delete id="delete" parameterType="java.lang.Long" >
     delete from w_sentence

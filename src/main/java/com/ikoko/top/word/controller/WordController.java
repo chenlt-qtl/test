@@ -16,6 +16,8 @@
 
 package com.ikoko.top.word.controller;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -25,6 +27,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.ikoko.top.common.BaseController;
+import com.ikoko.top.common.JsonMapper;
 import com.ikoko.top.word.entity.Word;
 import com.ikoko.top.word.service.IcibaSentenceService;
 import com.ikoko.top.word.service.SentenceService;
@@ -60,4 +63,22 @@ public class WordController extends BaseController{
         return "word/wordDetail";
     }
     
+    @RequestMapping(value="/getWord")
+    public void getWord(HttpServletRequest request,HttpServletResponse response) {
+        Object id = request.getParameter("id");
+        Word word = null;
+        if(id != null){
+            word = wordService.getById(String.valueOf(id));
+        }
+        word.setIcibaSentence(icibaSentenceService.selectByWordId(String.valueOf(word.getId())));
+        word.setSentences(sentenceService.selectByWord(String.valueOf(word.getId())));
+        renderString(response, word);
+    }
+    
+    @RequestMapping(value="/getWords")
+    public void getWords(HttpServletRequest request,HttpServletResponse response) {
+        String ids = String.valueOf(request.getParameter("ids"));
+        List<Word> list = wordService.getWords(ids);
+        renderString(response, JsonMapper.toJsonString(list),"application/json");
+    }
 }

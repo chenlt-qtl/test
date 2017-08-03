@@ -12,6 +12,8 @@ public class Word  extends DataEntity<Word> {
     private String parts;
     private String phAmMp3;
     private List<Acceptation> acceptations = new ArrayList<Acceptation>(); 
+    private List<IcibaSentence> icibaSentence = new ArrayList<IcibaSentence>();
+    private List<Sentence> sentences = new ArrayList<Sentence>();
     
     private String sentenceIndexs;
 
@@ -64,6 +66,22 @@ public class Word  extends DataEntity<Word> {
 
     public void setSentenceIndexs(String sentenceIndexs) {
         this.sentenceIndexs = sentenceIndexs;
+    }
+
+    public List<IcibaSentence> getIcibaSentence() {
+        return icibaSentence;
+    }
+
+    public void setIcibaSentence(List<IcibaSentence> icibaSentence) {
+        this.icibaSentence = icibaSentence;
+    }
+
+    public List<Sentence> getSentences() {
+        return sentences;
+    }
+
+    public void setSentences(List<Sentence> sentences) {
+        this.sentences = sentences;
     }
     
 }

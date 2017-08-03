@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/view/include/taglib.jsp"%>
 <html>
 <head>
-    <title>文章编辑</title>
+    <title>背诵</title>
     <%@ include file="../../include/head.jsp"%>
     <style>
         .tpl-content-wrapper{margin-left:0}
@@ -19,11 +19,14 @@
             <div class="row">
                 <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
                     <div class="widget am-cf">
-                          <div id='wordContent' style="display:none;">
-                             <div class="wordBody">
-		                        <font class='wordName'><div id="wordName"></div></font>
+                          <div id='wordContent'>
+								<div class="am-progress" style="margin-top: 10px; margin-left: 20px">
+									<div id='progressBar' class="am-progress-bar"></div>
+								</div>
+								<div class="wordBody">
+		                        <font class='wordName'><span id="wordName"></span></font>
 		                        <br /> 
-		                        <div class="ph">[<div id="phAm">]&nbsp;&nbsp;&nbsp;&nbsp;</div>
+		                        <div class="ph">[<span id="phAm"></span>]&nbsp;&nbsp;&nbsp;&nbsp;</div>
 		                        <span id="play" class="oper oper-play1" onclick="return play()"></span><br /><br />
 		                         
 		                        <div class="am-tabs" data-am-tabs>
@@ -45,10 +48,9 @@
 		                         
 		                    </div>
 		                    
-                            <div class="am-progress">
-							  <div id='progressBar' class="am-progress-bar"></div>
-							</div>
                           </div>
+                          
+                          <button id='button' style="margin-left:310px;margin-top:20px;" type="button" onclick="return getWord()" class="am-btn am-btn-secondary am-round">下一个</button>
                     </div>
                 </div>
             </div>
@@ -58,15 +60,59 @@
 <%@ include file="../../include/bottom.jsp"%>
 <script type="text/javascript">
 var words = '${words}';
-$("#progressBar").css("width",'${index}'/words.split(',').length);
+var wordArr = words.split(',');
+var word;
+var index = 0;
+
+function getWord(){
+	$.ajax({
+        traditional : true,
+        type : "POST",
+        url : "../word/getWord",
+        data : {"id":wordArr[index]},
+        dataType : "json",
+        success : function(result, textStatus) {
+        	word = result;
+            $("#wordName").html(word.wordName);
+            $("#phAm").html(word.phAm);
+            $("#tab1").html("");
+            $("#tab2").html("");
+            $("#tab3").html("");
+            $.each(word.acceptations,function(){
+            	$("#tab1").append(this.pos+" "+this.acceptation+"<br />");
+            })
+            
+            $.each(word.icibaSentence,function(){
+                $("#tab2").append(this.orig+"<br />"+this.trans+"<br /><br />");
+            })
+            
+            $.each(word.sentences,function(){
+                $("#tab3").append(this.content+"<br />");
+            })
+        },
+        error : function(XMLHttpRequest, textStatus, errorThrown) {
+            Message.errorAlert("Invoke ajax error:" + textStatus + " " + errorThrown);
+        }
+    }); 
+	index ++;
+	if(index==wordArr.length){
+        $("#button").html("开始测试");
+        $("#button").on('click', function (params) {
+        	openModel(false,'${ctx}/articleLevel/test?pageNo=${page.pageNo}&pageSize=${page.pageSize}&ids='+words);
+        });
+    }
+	$("#progressBar").css("width",index*100/wordArr.length+"%");
+}
+
+getWord();
 
 function end(){
     $("#play").attr("class","oper oper-play1");
 }
 
-function play(id){
+function play(){
     var audio = document.getElementById("audio");
-    audio.src = "${ctx}/word/getMp3?id="+id;
+    audio.src = "/file/ph_mp3/"+word.phAmMp3;
     audio.play();
     $("#play").attr("class","oper oper-pause");
     return false;

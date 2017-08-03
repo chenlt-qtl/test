@@ -22,8 +22,14 @@
     <include refid="Base_Column_List" />
     from w_iciba_sentence
     <where>
+        <if test="wordIds!=null and wordIds != ''">
+            word_id in  
+            <foreach item="id" index="index" collection="wordIds" open="(" separator="," close=")">  
+                #{id}
+            </foreach>
+        </if>
         <if test="wordId!=null and wordId != ''">
-            and word_id =#{wordId}
+            and word_id = #{wordId}
         </if>
     </where>
   </select>

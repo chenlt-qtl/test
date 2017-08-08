@@ -35,8 +35,6 @@ import com.ikoko.top.word.entity.ArticleLevel;
 import com.ikoko.top.word.entity.Word;
 import com.ikoko.top.word.service.ArticleLevelService;
 import com.ikoko.top.word.service.ArticleService;
-import com.ikoko.top.word.service.IcibaSentenceService;
-import com.ikoko.top.word.service.SentenceService;
 import com.ikoko.top.word.service.WordService;
 
 /**

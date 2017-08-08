@@ -34,7 +34,9 @@
                                 </c:forEach>
                                 </tbody>
                             </table>
-                            <button style="margin-left:310px;" type="button" onclick="return recite()" class="am-btn am-btn-secondary am-round">开始背诵</button>
+                            <button style="margin-left:310px;" type="button" onclick="return recite()" class="am-btn am-btn-secondary am-round">开始背诵</button> 
+                            
+                            <button style="margin-left:30px;" type="button" onclick="return test()" class="am-btn am-btn-secondary am-round">开始测试</button>
                      </div>
                 </div>
             </div>
@@ -53,6 +55,18 @@ function recite(){
 	});
 	openModel(false,'${ctx}/articleLevel/recite?pageNo=${page.pageNo}&pageSize=${page.pageSize}&index=1&words='+words);
 }
+
+function test(){
+    var words = '';
+    $("tbody").find("[name='wordId']").each(function(){
+        if(words.length!=0){
+            words += ","
+        }
+        words += $(this).val();
+    });
+    openModel(false,'${ctx}/articleLevel/test?pageNo=${page.pageNo}&pageSize=${page.pageSize}&ids='+words);
+}
+
 </script>
 </body>
 </html>
